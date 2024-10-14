@@ -1,311 +1,166 @@
-// import React, { useEffect, useState, useRef } from 'react';
-// import { useRouter } from 'next/navigation';
-// import { useUser } from '@clerk/nextjs';
-// import Image from 'next/image';
-// import { ClientSideSuspense, LiveblocksProvider, RoomProvider, useThreads } from '@liveblocks/react';
-// import { Composer, Thread } from '@liveblocks/react-ui';
-// import { doc, onSnapshot, updateDoc, setDoc, deleteDoc, collection, query, where, getDocs } from 'firebase/firestore';
-// import { Bell, Loader, FileText, MoreVertical, MessageCircle, X, Settings, User, LogOut } from 'lucide-react';
-// import { toast } from 'sonner';
-// import { v4 as uuidv4 } from 'uuid';
-// import EditorJS from '@editorjs/editorjs';
+import React, { useState } from 'react';
+import Image from 'next/image';
+import { PlusCircle, FileText, Share2, Download, Trash2, Edit, ChevronDown } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import DocumentContent from './DocumentContent';
+import CoverModal from '../CoverModal';
+import { EmojiSelector } from '@/components/EmojiSelector';
+import { Tooltip } from '@/components/ui/tooltip';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
-// import { db } from '@/config/firebaseConfig';
-// import { Button } from '@/components/ui/button';
-// import { Progress } from '@/components/ui/progress';
-// import {
-//   DropdownMenu,
-//   DropdownMenuContent,
-//   DropdownMenuItem,
-//   DropdownMenuTrigger,
-// } from '@/components/ui/dropdown-menu';
-// import { EmojiSelector } from '@/components/EmojiSelector';
+const Main = ({ params, documentInfo, image, emojiIcon, updateDocument, documents, handleCreateDocument, user, handleDeleteDocument }) => {
+  const [isEditing, setIsEditing] = useState(false);
 
-// const MAX_DOCUMENTS_COUNT = process.env.NEXT_PUBLIC_MAX_DOCUMENTS_COUNT || 5;
+  const handleShare = () => {
+    const url = window.location.href;
+    navigator.clipboard.writeText(url).then(() => {
+      alert('Link copied to clipboard!');
+    }).catch(err => {
+      console.error('Failed to copy link: ', err);
+    });
+  };
 
-// const Document = ({ params }) => {
-//   const [documents, setDocuments] = useState([]);
-//   const [loading, setLoading] = useState(false);
-//   const [image, setImage] = useState('/images/cover.png');
-//   const [emojiIcon, setEmojiIcon] = useState(null);
-//   const [documentInfo, setDocumentInfo] = useState(null);
-//   const [openComment, setOpenComment] = useState(false);
-//   const [isEditorReady, setIsEditorReady] = useState(false);
-//   const { user } = useUser();
-//   const router = useRouter();
-//   const editorRef = useRef(null);
-//   const { threads } = useThreads();
+  const handleDownload = async () => {
+    if (!documentInfo) return;
 
-//   useEffect(() => {
-//     params && getDocumentList();
-//     params?.documentid && getDocument();
-//   }, [params]);
+    const content = JSON.stringify(documentInfo, null, 2);
+    const blob = new Blob([content], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${documentInfo.name || 'document'}.json`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
 
-//   useEffect(() => {
-//     if (user && !isEditorReady && params?.documentid) {
-//       initializeEditor();
-//     }
-//   }, [user, isEditorReady, params?.documentid]);
+  return (
+    <main className="flex-1 overflow-auto bg-gray-50">
+      {params?.documentid ? (
+        <div className="flex flex-col h-full">
+          <div className="sticky top-0 z-10 bg-white shadow-sm">
+            <div className="relative h-48 w-full overflow-hidden">
+              <Image
+                src={image || "/images/default-cover.png"}
+                alt="Document cover"
+                layout="fill"
+                objectFit="cover"
+              />
+              <CoverModal setNewCover={cover => updateDocument('cover', cover)}>
+                <Button variant="ghost" className="absolute bottom-2 right-2 bg-white/80 hover:bg-white">
+                  Change Cover
+                </Button>
+              </CoverModal>
+            </div>
+            <div className="flex items-center justify-between px-6 py-4">
+              <div className="flex items-center space-x-4">
+                <EmojiSelector
+                  setEmojiIcon={emoji => updateDocument('emoji', emoji)}
+                  emojiIcon={emojiIcon || "📄"}
+                />
+                {isEditing ? (
+                  <input
+                    type="text"
+                    value={documentInfo?.name}
+                    onChange={e => updateDocument('name', e.target.value)}
+                    onBlur={() => setIsEditing(false)}
+                    autoFocus
+                    className="text-2xl font-bold outline-none bg-gray-100 px-2 py-1 rounded"
+                  />
+                ) : (
+                  <h1
+                    className="text-2xl font-bold cursor-pointer"
+                    onClick={() => setIsEditing(true)}
+                  >
+                    {documentInfo?.name || "Untitled Document"}
+                  </h1>
+                )}
+              </div>
+              <div className="flex items-center space-x-2">
+                <Tooltip content="Share">
+                  <Button variant="ghost" size="icon" onClick={handleShare}>
+                    <Share2 className="h-5 w-5" />
+                  </Button>
+                </Tooltip>
+                <Tooltip content="Download">
+                  <Button variant="ghost" size="icon" onClick={handleDownload}>
+                    <Download className="h-5 w-5" />
+                  </Button>
+                </Tooltip>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="icon">
+                      <ChevronDown className="h-5 w-5" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuItem onClick={() => setIsEditing(true)}>
+                      <Edit className="mr-2 h-4 w-4" />
+                      Rename
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => handleDeleteDocument(params.documentid)}>
+                      <Trash2 className="mr-2 h-4 w-4" />
+                      Delete
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+            </div>
+          </div>
+          <div className="flex-grow overflow-hidden">
+            <DocumentContent 
+              params={params} 
+              documentInfo={documentInfo} 
+              user={user} 
+              updateDocument={updateDocument}
+            />
+          </div>
+        </div>
+      ) : (
+        <div className="flex flex-col h-full items-center justify-center p-6">
+          <div className="text-center mb-8">
+            <h2 className="text-3xl font-bold mb-2 text-gray-800">Welcome to Your Workspace</h2>
+            <p className="text-xl text-gray-600">Get started by creating a new document or selecting an existing one.</p>
+          </div>
+          <div className="flex flex-wrap justify-center gap-4">
+            <Button onClick={handleCreateDocument} className="flex items-center bg-blue-600 text-white px-6 py-3 text-lg">
+              <PlusCircle className="mr-2" />
+              Create New Document
+            </Button>
+            {documents.length > 0 && (
+              <div className="flex flex-col items-center mt-8 w-full max-w-4xl">
+                <h3 className="text-2xl font-semibold mb-4 text-gray-700">Recent Documents:</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full">
+                  {documents.slice(0, 6).map(doc => (
+                    <Button 
+                      key={doc.id} 
+                      variant="outline" 
+                      className="w-full flex flex-col items-start justify-start p-6 h-auto hover:bg-gray-100 transition-colors duration-200"
+                      onClick={() => router.push(`/workspace/${params?.workspaceid}/${doc.id}`)}
+                    >
+                      <div className="flex items-center justify-between w-full mb-4">
+                        <span className="text-3xl">{doc.emoji || "📄"}</span>
+                        <FileText className="text-gray-400" size={20} />
+                      </div>
+                      <span className="font-medium text-lg text-gray-800">{doc.name || "Untitled Document"}</span>
+                      <span className="text-sm text-gray-500 mt-2">Last edited: {new Date(doc.lastEdited).toLocaleDateString()}</span>
+                    </Button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+    </main>
+  );
+};
 
-//   const getDocumentList = () => {
-//     const q = query(
-//       collection(db, 'documents'),
-//       where('workspaceID', '==', String(params?.workspaceid))
-//     );
-
-//     const unsubscribe = onSnapshot(q, snapshot => {
-//       const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-//       setDocuments(data);
-//     });
-//   };
-
-//   const getDocument = async () => {
-//     try {
-//       const docRef = doc(db, 'documents', params.documentid);
-//       const unsubscribe = onSnapshot(docRef, (docSnap) => {
-//         if (docSnap.exists()) {
-//           const docData = docSnap.data();
-//           setDocumentInfo(docData);
-//           setEmojiIcon(docData.emoji);
-//           docData.cover && setImage(docData.cover);
-//         }
-//       });
-//     } catch (error) {
-//       console.error('Error fetching document:', error);
-//     }
-//   };
-
-//   const handleCreateDocument = async () => {
-//     if (documents?.length >= MAX_DOCUMENTS_COUNT) {
-//       toast('Upgrade required', {
-//         description: 'You have reached the maximum number of files. Upgrade your plan to create more documents.',
-//         action: {
-//           label: 'Upgrade',
-//           onClick: () => console.log('Upgrade clicked'),
-//         },
-//       });
-//       return;
-//     }
-
-//     setLoading(true);
-
-//     const documentID = uuidv4();
-//     await setDoc(doc(db, 'documents', documentID), {
-//       id: documentID,
-//       workspaceID: params?.workspaceid,
-//       owner: user?.primaryEmailAddress?.emailAddress,
-//       name: 'Untitled Document',
-//       cover: null,
-//       emoji: null,
-//       documentOutput: [],
-//     });
-
-//     await setDoc(doc(db, 'documentOutput', documentID), {
-//       id: documentID,
-//       output: [],
-//     });
-
-//     router.push(`/workspace/${params?.workspaceid}/${documentID}`);
-//     setLoading(false);
-//   };
-
-//   const handleDeleteDocument = async docId => {
-//     await deleteDoc(doc(db, 'documents', docId));
-//     toast('Document Deleted!');
-//   };
-
-//   const updateDocument = async (key, value) => {
-//     try {
-//       const docRef = doc(db, 'documents', params.documentid);
-//       await updateDoc(docRef, { [key]: value });
-//     } catch (error) {
-//       console.error('Error updating document:', error);
-//     }
-//   };
-
-//   const initializeEditor = () => {
-//     if (!editorRef.current) {
-//       const editor = new EditorJS({
-//         holder: 'editorjs',
-//         onChange: async () => {
-//           const outputData = await editor.save();
-//           const documentRef = doc(db, 'documentOutput', params?.documentid);
-//           await updateDoc(documentRef, {
-//             output: JSON.stringify(outputData),
-//             editedBy: user?.primaryEmailAddress?.emailAddress,
-//           });
-//         },
-//         onReady: () => {
-//           setIsEditorReady(true);
-//           fetchDocumentOutput();
-//         },
-//         tools: {
-//           // Add your EditorJS tools configuration here
-//         },
-//       });
-
-//       editorRef.current = editor;
-//     }
-//   };
-
-//   const fetchDocumentOutput = () => {
-//     const documentRef = doc(db, 'documentOutput', params?.documentid);
-
-//     return onSnapshot(documentRef, doc => {
-//       const { output } = doc.data() || {};
-
-//       if (!output) return;
-
-//       try {
-//         const parsedOutput = JSON.parse(output);
-//         editorRef.current?.render(parsedOutput);
-//       } catch (error) {
-//         console.error('Error parsing document output:', error);
-//       }
-//     });
-//   };
-
-//   return (
-//     <div className="flex h-screen bg-gray-100">
-//       {/* Sidebar */}
-//       <aside className="w-64 bg-white p-6 shadow-md">
-//         <div className="flex items-center justify-between border-b pb-5">
-//           <h1 className="text-xl font-bold">Documenta</h1>
-//           <Bell className="text-gray-500 hover:text-gray-700 cursor-pointer" />
-//         </div>
-//         <div className="mt-6 flex items-center justify-between">
-//           <h2 className="text-lg font-semibold">My Workspace</h2>
-//           <Button onClick={handleCreateDocument} size="sm" className="text-lg">
-//             {loading ? <Loader className="h-4 w-4 animate-spin" /> : '+'}
-//           </Button>
-//         </div>
-//         <nav className="mt-6">
-//           {documents.map(doc => (
-//             <div
-//               key={doc?.id}
-//               onClick={() => router.push(`/workspace/${params?.workspaceid}/${doc?.id}`)}
-//               className={`mt-2 flex cursor-pointer items-center justify-between rounded-lg p-2 hover:bg-gray-100 ${
-//                 doc?.id === params?.documentid ? 'bg-gray-200' : ''
-//               }`}
-//             >
-//               <div className="flex items-center gap-2">
-//                 {doc.emoji || <FileText className="text-gray-500" size={20} />}
-//                 <span className="truncate">{doc.name}</span>
-//               </div>
-//               <DropdownMenu>
-//                 <DropdownMenuTrigger>
-//                   <MoreVertical size={16} />
-//                 </DropdownMenuTrigger>
-//                 <DropdownMenuContent>
-//                   <DropdownMenuItem onClick={() => handleDeleteDocument(doc?.id)}>
-//                     Delete
-//                   </DropdownMenuItem>
-//                 </DropdownMenuContent>
-//               </DropdownMenu>
-//             </div>
-//           ))}
-//         </nav>
-//         <div className="absolute bottom-6 w-52">
-//           <Progress
-//             value={(documents?.length / MAX_DOCUMENTS_COUNT) * 100}
-//             className="h-2 rounded-full bg-gray-200"
-//           />
-//           <p className="mt-2 text-sm text-gray-600">
-//             {documents?.length} out of {MAX_DOCUMENTS_COUNT} files used
-//           </p>
-//           <p className="mt-1 text-xs text-gray-500">
-//             Upgrade for unlimited access
-//           </p>
-//         </div>
-//       </aside>
-
-//       {/* Main content */}
-//       <main className="flex-1 overflow-auto">
-//         <header className="bg-white shadow-sm p-4 flex justify-between items-center">
-//           <div className="flex items-center space-x-4">
-//             <EmojiSelector
-//               setEmojiIcon={emoji => {
-//                 setEmojiIcon(emoji);
-//                 updateDocument('emoji', emoji);
-//               }}
-//               emojiIcon={emojiIcon || "📄"}
-//             />
-//             <input
-//               type="text"
-//               defaultValue={documentInfo?.name}
-//               onBlur={e => updateDocument('name', e.target.value)}
-//               className="text-2xl font-bold outline-none"
-//               placeholder="Untitled Document"
-//             />
-//           </div>
-//           <div className="flex items-center space-x-4">
-//             <Button variant="outline">Share</Button>
-//             <DropdownMenu>
-//               <DropdownMenuTrigger>
-//                 <User className="text-gray-500 hover:text-gray-700 cursor-pointer" />
-//               </DropdownMenuTrigger>
-//               <DropdownMenuContent>
-//                 <DropdownMenuItem>
-//                   <Settings className="mr-2" size={16} />
-//                   Settings
-//                 </DropdownMenuItem>
-//                 <DropdownMenuItem>
-//                   <LogOut className="mr-2" size={16} />
-//                   Logout
-//                 </DropdownMenuItem>
-//               </DropdownMenuContent>
-//             </DropdownMenu>
-//           </div>
-//         </header>
-//         {params?.documentid ? (
-//           <div className="p-8">
-//             <div className="mb-6 rounded-lg bg-white p-6 shadow-md">
-//               <div className="relative h-48 w-full overflow-hidden rounded-t-lg">
-//                 <Image
-//                   src={image}
-//                   alt="Document cover"
-//                   layout="fill"
-//                   objectFit="cover"
-//                 />
-//                 <div className="absolute inset-0 bg-black bg-opacity-30 opacity-0 transition-opacity hover:opacity-100 flex items-center justify-center">
-//                   <p className="text-white font-semibold">Change Cover</p>
-//                 </div>
-//               </div>
-//             </div>
-//             <div className="rounded-lg bg-white p-6 shadow-md">
-//               <div id="editorjs" />
-//             </div>
-//           </div>
-//         ) : (
-//           <div className="flex h-full items-center justify-center">
-//             <p className="text-xl text-gray-500">Select a document or create a new one</p>
-//           </div>
-//         )}
-//       </main>
-
-//       {/* Comment section */}
-//       <div className="fixed bottom-6 right-6 z-10">
-//         <Button
-//           onClick={() => setOpenComment(!openComment)}
-//           className="rounded-full bg-blue-600 p-3 text-white shadow-lg hover:bg-blue-700"
-//         >
-//           {openComment ? <X size={24} /> : <MessageCircle size={24} />}
-//         </Button>
-//         {openComment && (
-//           <div className="absolute bottom-16 right-0 h-[350px] w-[300px] overflow-auto rounded-lg bg-white p-4 shadow-xl">
-//             {threads?.map(thread => (
-//               <Thread key={thread.id} thread={thread} />
-//             ))}
-//             <Composer>
-//               <Composer.Submit className="mt-2 rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700">
-//                 Reply
-//               </Composer.Submit>
-//             </Composer>
-//           </div>
-//         )}
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default Document;
+export default Main;

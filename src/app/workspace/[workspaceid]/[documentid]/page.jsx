@@ -12,7 +12,6 @@ const Document = ({ params }) => {
       <main className="flex-grow">
         <WorkspaceLayout params={params} />
       </main>
-      <Footer />
     </div>
   )
 }

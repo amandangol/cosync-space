@@ -1,16 +1,19 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useThreads } from '@liveblocks/react'
 import { Composer, Thread } from '@liveblocks/react-ui'
-import { MessageCircle, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { MessageCircle, X } from 'lucide-react'
 
-const CommentSection = ({ openComment, setOpenComment }) => {
+const CommentSection = () => {
+  const [openComment, setOpenComment] = useState(false)
   const { threads } = useThreads()
+
+  const toggleComment = () => setOpenComment(prev => !prev)
 
   return (
     <div className="fixed bottom-6 right-6 z-10">
       <Button
-        onClick={() => setOpenComment(!openComment)}
+        onClick={toggleComment}
         className="rounded-full bg-blue-600 p-3 text-white shadow-lg hover:bg-blue-700"
       >
         {openComment ? <X size={24} /> : <MessageCircle size={24} />}
