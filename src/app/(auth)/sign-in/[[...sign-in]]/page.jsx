@@ -74,8 +74,8 @@ export default function SignInPage() {
                 footer: 'hidden',
               },
             }}
-            redirectUrl="/dashboard"
-            afterSignInUrl="/dashboard"
+            redirectUrl="/syncspace-dashboard"
+            afterSignInUrl="/syncspace-dashboard"
           />
           <div className="mt-8 flex items-center justify-between">
             <Link 

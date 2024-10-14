@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Zap, Layers, Shield, Menu } from 'lucide-react';
 import Logo from '@components/common/Logo';
+import Footer from '@/components/common/Footer';
 
 export default function Home() {
   return (
@@ -16,8 +17,7 @@ export default function Home() {
         <Features />
         <CallToAction />
       </main>
-      <Footer />
-    </div>
+      <Footer></Footer> </div>
   );
 }
 
@@ -119,7 +119,7 @@ const Hero = () => (
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.4 }}
       >
-        <Link href="/dashboard">
+        <Link href="/syncspace-dashboard">
           <Button className="bg-white text-black hover:bg-gray-200">
             Get Started <ArrowRight className="ml-2 h-4 w-4" />
           </Button>
@@ -195,23 +195,3 @@ const CallToAction = () => (
   </section>
 );
 
-const Footer = () => (
-  <footer className="bg-gray-900 py-12">
-    <div className="mx-auto max-w-6xl px-4">
-      <div className="flex flex-col items-center justify-between space-y-4 md:flex-row md:space-y-0">
-        <p className="text-sm text-gray-400">&copy; 2024 SyncSpace. All rights reserved.</p>
-        <nav className="flex space-x-4">
-          <FooterLink href="/privacy">Privacy</FooterLink>
-          <FooterLink href="/terms">Terms</FooterLink>
-          <FooterLink href="/contact">Contact</FooterLink>
-        </nav>
-      </div>
-    </div>
-  </footer>
-);
-
-const FooterLink = ({ href, children }) => (
-  <Link href={href} className="text-sm text-gray-400 hover:text-white">
-    {children}
-  </Link>
-);

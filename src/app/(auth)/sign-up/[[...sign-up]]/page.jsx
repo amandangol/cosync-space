@@ -74,8 +74,8 @@ export default function SignUpPage() {
                 footer: 'hidden',
               },
             }}
-            redirectUrl="/dashboard"
-            afterSignUpUrl="/dashboard"
+            redirectUrl="/syncspace-dashboard"
+            afterSignUpUrl="/syncspace-dashboard"
           />
           <div className="mt-8 flex items-center justify-center">
             <Link 
