@@ -1,7 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { PlusCircle } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+
 
 const WelcomeSection = ({ user, onCreateWorkspace }) => (
   <motion.div

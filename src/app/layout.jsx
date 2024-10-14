@@ -14,8 +14,8 @@ export default function RootLayout({ children }) {
         <head>
           <meta charSet="UTF-8" />
           <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-          <meta name="description" content="Flowspace - A powerful platform for team collaboration and project management." />
-          <title>Flowspace</title>
+          <meta name="description" content="SyncSpace - A powerful platform for team collaboration and project management." />
+          <title>SyncSpace</title>
         </head>
         <body className={`${nunito.className} bg-gray-50 text-gray-900`}>
           <div className="min-h-screen flex flex-col">

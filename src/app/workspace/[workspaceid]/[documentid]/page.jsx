@@ -1,25 +1,19 @@
 'use client'
 
-import { useEffect } from 'react'
-
-import { Room } from '@/components/Room'
-import Main from '@/components/workspace/Main'
-import SideNavbar from '@/components/workspace/SideNavbar'
+import React from 'react'
+import WorkspaceLayout from '@/components/workspace/WorkspaceLayout'
+import Header from '@components/common/Header'
+import Footer from '@components/common/Footer'
 
 const Document = ({ params }) => {
-  useEffect(() => {
-    console.log(params)
-  }, [])
-
   return (
-    <Room params={params}>
-      <div>
-        <SideNavbar params={params} />
-      </div>
-      <div className="md:ml-72">
-        <Main params={params} />
-      </div>
-    </Room>
+    <div className="min-h-screen flex flex-col">
+      <Header />
+      <main className="flex-grow">
+        <WorkspaceLayout params={params} />
+      </main>
+      <Footer />
+    </div>
   )
 }
 
