@@ -27,22 +27,27 @@ const Header = () => {
 
   return (
     <motion.header
-      className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-br from-gray-700 to-gray-800 text-gray-900 shadow-md"
-      initial={{ y: 0 }} // Keep it in view
-      animate={{ y: 0 }} // No animation needed for visibility
+      className="absolute top-0 left-0 right-0 z-50  text-gray-900 shadow-md"
+      initial={{ y: 0 }} 
+      animate={{ y: 0 }} 
     >
       <div className="mx-auto flex max-w-6xl items-center justify-between p-4">
-        <Link href="/" className="flex items-center space-x-2">
-          <Logo />
-          <span className="text-xl font-bold text-white">SyncSpace</span>
-        </Link>
+      <Link href="/" className="flex items-center space-x-2">
+        <Image
+          src="/images/logo.svg"
+          alt="CoSyncSpace Logo"
+          width={200} 
+          height={50} 
+          className="text-indigo-600"
+        />
+      </Link>
         <div className="hidden md:block">
-          <Link href="/syncspace-dashboard">
+          <Link href="/cosyncspace-dashboard">
             <Button variant="outline" className="mr-2 border-gray-700 text-black hover:bg-gray-300">
               Log In
             </Button>
           </Link>
-          <Link href="/syncspace-dashboard">
+          <Link href="/cosyncspace-dashboard">
             <Button className="bg-white text-black hover:bg-gray-300">
               Sign Up
             </Button>
@@ -62,12 +67,12 @@ const Header = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
         >
-          <Link href="/syncspace-dashboard">
+          <Link href="/cosyncspace-dashboard">
             <Button variant="outline" className="mt-2 w-full border-gray-700 text-gray-800 hover:bg-gray-300">
               Log In
             </Button>
           </Link>
-          <Link href="/syncspace-dashboard">
+          <Link href="/cosyncspace-dashboard">
             <Button className="mt-2 w-full bg-white text-black hover:bg-gray-200">
               Sign Up
             </Button>
@@ -104,7 +109,7 @@ const Hero = () => (
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.4 }}
       >
-        <Link href="/syncspace-dashboard">
+        <Link href="/cosyncspace-dashboard">
           <Button className="bg-gray-900 text-white hover:bg-gray-800">
             Get Started <ArrowRight className="ml-2 h-4 w-4" />
           </Button>
@@ -164,7 +169,7 @@ const CallToAction = () => (
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
       >
-        <Link href="/syncspace-dashboard">
+        <Link href="/cosyncspace-dashboard">
         <Button className="bg-gray-900 text-white hover:bg-gray-800">
           Sign Up Now <ArrowRight className="ml-2 h-4 w-4" />
         </Button>

@@ -6,7 +6,7 @@ const NewWorkspaceButton = () => {
   const router = useRouter()
 
   const handleCreateWorkspace = () => {
-    router.push('/syncspace-create')
+    router.push('/cosyncspace-create')
   }
 
   return (

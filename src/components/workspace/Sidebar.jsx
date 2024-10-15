@@ -13,7 +13,7 @@ import { Tooltip } from '@/components/ui/tooltip';
 
 const MAX_DOCUMENTS_COUNT = process.env.NEXT_PUBLIC_MAX_DOCUMENTS_COUNT || 5;
 
-const Sidebar = ({ documents = [], loading, params, handleCreateDocument, handleDeleteDocument, router, isCollapsed, toggleSidebar }) => {
+const Sidebar = ({ documents = [], loading, params, handleCreateDocument, handleDeleteDocument, router, isCollapsed=true, toggleSidebar }) => {
   return (
     <aside 
       className={`bg-gray-50 text-gray-800 transition-all duration-300 h-screen flex flex-col

@@ -16,6 +16,30 @@ import {
 
 const Main = ({ params, documentInfo, updateDocument, documents, handleCreateDocument, handleDeleteDocument, user, router }) => {
   const [isEditing, setIsEditing] = useState(false);
+  const [editedName, setEditedName] = useState(documentInfo?.name || "Untitled Document");
+
+  const handleRename = () => {
+    setIsEditing(true);
+    setEditedName(documentInfo?.name || "Untitled Document");
+  };
+
+  const handleNameChange = (e) => {
+    setEditedName(e.target.value);
+  };
+
+  const handleNameSubmit = () => {
+    updateDocument('name', editedName);
+    setIsEditing(false);
+  };
+
+  const handleNameKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      handleNameSubmit();
+    } else if (e.key === 'Escape') {
+      setIsEditing(false);
+      setEditedName(documentInfo?.name || "Untitled Document");
+    }
+  };
 
   const handleShare = () => {
     const url = window.location.href;
@@ -121,24 +145,25 @@ const Main = ({ params, documentInfo, updateDocument, documents, handleCreateDoc
             setEmojiIcon={emoji => updateDocument('emoji', emoji)}
             emojiIcon={documentInfo?.emoji || "📄"}
           />
-            {isEditing ? (
-              <input
-                type="text"
-                value={documentInfo?.name}
-                onChange={e => updateDocument('name', e.target.value)}
-                onBlur={() => setIsEditing(false)}
-                autoFocus
-                className="text-2xl font-bold outline-none bg-gray-100 px-2 py-1 rounded-md"
-              />
-            ) : (
-              <h1
-                className="text-2xl font-bold cursor-pointer hover:bg-gray-100 px-2 py-1 rounded-md transition-colors duration-200"
-                onClick={() => setIsEditing(true)}
-              >
-                {documentInfo?.name || "Untitled Document"}
-              </h1>
-            )}
-          </div>
+          {isEditing ? (
+            <input
+              type="text"
+              value={editedName}
+              onChange={handleNameChange}
+              onBlur={handleNameSubmit}
+              onKeyDown={handleNameKeyDown}
+              autoFocus
+              className="text-2xl font-bold outline-none bg-gray-100 px-2 py-1 rounded-md"
+            />
+          ) : (
+            <h1
+              className="text-2xl font-bold cursor-pointer hover:bg-gray-100 px-2 py-1 rounded-md transition-colors duration-200"
+              onClick={handleRename}
+            >
+              {documentInfo?.name || "Untitled Document"}
+            </h1>
+          )}
+        </div>
           <div className="flex items-center space-x-2">
             <Tooltip content="Share">
               <Button variant="ghost" size="icon" onClick={handleShare} className="hover:bg-gray-100 rounded-full">
@@ -161,15 +186,12 @@ const Main = ({ params, documentInfo, updateDocument, documents, handleCreateDoc
                   <Edit className="mr-2 h-4 w-4" />
                   Rename
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => handleDeleteDocument(params.documentid)}>
-                  <Trash2 className="mr-2 h-4 w-4" />
-                  Delete
-                </DropdownMenuItem>
+                
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
         </div>
-        <div className="flex items-center space-x-2 px-6 py-2 border-b">
+        {/* <div className="flex items-center space-x-2 px-6 py-2 border-b">
           <Button variant="ghost" size="sm"><Bold className="h-4 w-4" /></Button>
           <Button variant="ghost" size="sm"><Italic className="h-4 w-4" /></Button>
           <Button variant="ghost" size="sm"><Underline className="h-4 w-4" /></Button>
@@ -180,7 +202,7 @@ const Main = ({ params, documentInfo, updateDocument, documents, handleCreateDoc
           <div className="h-6 w-px bg-gray-300 mx-2" />
           <Button variant="ghost" size="sm"><List className="h-4 w-4" /></Button>
           <Button variant="ghost" size="sm"><ListOrdered className="h-4 w-4" /></Button>
-        </div>
+        </div> */}
       </div>
       <div className="flex-grow overflow-auto">
         <div className="max-w-4xl mx-auto my-8 p-8 bg-white shadow-lg rounded-lg">

@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { SignIn, useSignIn } from '@clerk/nextjs';
 import { motion } from 'framer-motion';
 import { ArrowRight, Zap } from 'lucide-react';
-import Logo from '@components/common/Logo';
+import Image from 'next/image';
 
 export default function SignInPage() {
   const { isLoaded, signIn, setActive } = useSignIn();
@@ -18,17 +18,21 @@ export default function SignInPage() {
     <div className="flex min-h-screen bg-black text-white">
       {/* Left side - Branding and Visual Element */}
       <div className="hidden w-1/2 flex-col justify-between p-12 lg:flex">
-      <Link href="/">
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="flex items-center space-x-3"
-        >
-                   <Logo />
-
-          <span className="text-3xl font-bold">SyncSpace</span>
-        </motion.div>
+        <Link href="/">
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="flex items-center space-x-3"
+          >
+            <Image
+              src="/images/logo-white.svg"
+              alt="CoSyncSpace Logo"
+              width={200} 
+              height={100} 
+              className="text-indigo-600"
+            />
+          </motion.div>
         </Link>
         
         <motion.div
@@ -74,8 +78,8 @@ export default function SignInPage() {
                 footer: 'hidden',
               },
             }}
-            redirectUrl="/syncspace-dashboard"
-            afterSignInUrl="/syncspace-dashboard"
+            redirectUrl="/cosyncspace-dashboard"
+            afterSignInUrl="/cosyncspace-dashboard"
           />
           <div className="mt-8 flex items-center justify-between">
             <Link 

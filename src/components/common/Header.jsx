@@ -1,15 +1,19 @@
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { UserButton, OrganizationSwitcher } from '@clerk/nextjs';
-import Logo from '@components/common/Logo';
-
 
 const Header = () => (
   <header className="bg-white shadow-sm">
-    <div className="w-full flex items-center justify-between px-4 sm:px-6 lg:px-8 py-4">
-      <Link href="/syncspace-dashboard" className="flex items-center space-x-2">
-        <Logo className="w-8 h-8 text-indigo-600" />
-        <span className="text-2xl font-semibold text-gray-800">SyncSpace</span>
+    <div className="w-full flex items-center justify-between px-4 sm:px-6 lg:px-8 py-2"> {/* Reduced padding on the Y-axis */}
+      <Link href="/cosyncspace-dashboard" className="flex items-center space-x-2">
+        <Image
+          src="/images/logo.svg" 
+          alt="CoSyncSpace Logo"
+          width={200} 
+          height={50} 
+          className="text-indigo-600"
+        />
       </Link>
       <div className="flex items-center space-x-4">
         <OrganizationSwitcher

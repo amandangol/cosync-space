@@ -5,8 +5,7 @@ import { useRouter } from 'next/navigation';
 import { SignUp, useSignUp } from '@clerk/nextjs';
 import { motion } from 'framer-motion';
 import { ArrowRight, Zap } from 'lucide-react';
-import Logo from '@components/common/Logo';
-
+import Image from 'next/image';
 export default function SignUpPage() {
   const { isLoaded, signUp, setActive } = useSignUp();
   const router = useRouter();
@@ -25,9 +24,13 @@ export default function SignUpPage() {
           transition={{ duration: 0.8 }}
           className="flex items-center space-x-3"
         >
-                   <Logo />
-
-          <span className="text-3xl font-bold">SyncSpace</span>
+            <Image
+              src="/images/logo-white.svg"
+              alt="CoSyncSpace Logo"
+              width={200} 
+              height={100} 
+              className="text-indigo-600"
+            />
         </motion.div>
         </Link>
         
@@ -74,8 +77,8 @@ export default function SignUpPage() {
                 footer: 'hidden',
               },
             }}
-            redirectUrl="/syncspace-dashboard"
-            afterSignUpUrl="/syncspace-dashboard"
+            redirectUrl="/cosyncspace-dashboard"
+            afterSignUpUrl="/cosyncspace-dashboard"
           />
           <div className="mt-8 flex items-center justify-center">
             <Link 

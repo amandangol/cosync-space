@@ -15,7 +15,7 @@ import SimpleImage from 'simple-image-editorjs';
 import { Button } from '@/components/ui/button';
 import { Save, Clock } from 'lucide-react';
 
-const DocumentContent = ({ params, documentInfo, updateDocument }) => {
+const DocumentContent = ({ params, documentInfo, updateDocument, currentFormat, setCurrentFormat }) => {
   const [isEditorReady, setIsEditorReady] = useState(false);
   const [lastSaved, setLastSaved] = useState(null);
   const editorRef = useRef(null);
@@ -27,6 +27,43 @@ const DocumentContent = ({ params, documentInfo, updateDocument }) => {
       initializeEditor();
     }
   }, [user, isEditorReady, params?.documentid]);
+
+  useEffect(() => {
+    if (isEditorReady && currentFormat) {
+      applyFormatting(currentFormat);
+    }
+  }, [currentFormat, isEditorReady]);
+
+  const applyFormatting = (format) => {
+    if (!editorRef.current) return;
+
+    const editor = editorRef.current;
+
+    switch (format) {
+      case 'bold':
+      case 'italic':
+        // For inline styles, we need to use the inline toolbar
+        editor.blocks.getBlockByIndex(editor.blocks.getCurrentBlockIndex())
+          .querySelector('.ce-paragraph')
+          .dispatchEvent(new KeyboardEvent('keydown', {
+            'key': format === 'bold' ? 'b' : 'i',
+            'ctrlKey': true,
+            'bubbles': true
+          }));
+        break;
+      case 'left':
+      case 'center':
+      case 'right':
+        editor.blocks.getBlockByIndex(editor.blocks.getCurrentBlockIndex()).setAlignment(format);
+        break;
+      case 'unordered-list':
+      case 'ordered-list':
+        editor.blocks.insert('list', { style: format === 'unordered-list' ? 'unordered' : 'ordered' });
+        break;
+    }
+
+    setCurrentFormat(null);
+  };
 
   const saveDocument = async () => {
     if (!editorRef.current) return;
