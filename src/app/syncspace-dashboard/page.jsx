@@ -1,5 +1,4 @@
 import React from 'react';
-import Dashboard from '@/components/Dashboard/Dashboard';
 import Footer from '@/components/common/Footer';
 
 export default function DashboardPage() {
