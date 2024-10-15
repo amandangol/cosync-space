@@ -1,13 +1,25 @@
-import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
+import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
 
 const isProtectedRoute = createRouteMatcher([
   '/cosyncspace-dashboard(.*)',
   '/workspace(.*)',
-])
+]);
 
 export default clerkMiddleware((auth, req) => {
-  if (isProtectedRoute(req)) auth().protect()
-})
+  const url = new URL(req.url);
+
+  // Check if there's an invitation token in the URL
+  if (url.searchParams.has("invitation_token")) {
+    return new Response(null, {
+      status: 302,
+      headers: {
+        Location: '/cosyncspace-dashboard', // or wherever  the user to be redirected
+      },
+    });
+  }
+
+  if (isProtectedRoute(req)) auth().protect();
+});
 
 export const config = {
   matcher: [
@@ -16,4 +28,4 @@ export const config = {
     // Always run for API routes
     '/(api|trpc)(.*)',
   ],
-}
+};

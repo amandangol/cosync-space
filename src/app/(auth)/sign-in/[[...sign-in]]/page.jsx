@@ -89,12 +89,12 @@ export default function SignInPage() {
               Create account
               <ArrowRight className="ml-1 h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
             </Link>
-            <Link 
+            {/* <Link 
               href="/forgot-password" 
               className="text-sm font-medium text-gray-600 hover:text-gray-500"
             >
               Forgot password?
-            </Link>
+            </Link> */}
           </div>
         </motion.div>
       </div>
