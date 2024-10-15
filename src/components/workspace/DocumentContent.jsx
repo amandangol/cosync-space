@@ -15,7 +15,7 @@ import SimpleImage from 'simple-image-editorjs';
 import { Button } from '@/components/ui/button';
 import { Save, Clock } from 'lucide-react';
 
-const DocumentContent = ({ params }) => {
+const DocumentContent = ({ params, documentInfo, updateDocument }) => {
   const [isEditorReady, setIsEditorReady] = useState(false);
   const [lastSaved, setLastSaved] = useState(null);
   const editorRef = useRef(null);
@@ -64,7 +64,6 @@ const DocumentContent = ({ params }) => {
       const editor = new EditorJS({
         holder: 'editorjs',
         onChange: () => {
-          // Debounce the save operation
           clearTimeout(editor.saveTimeout);
           editor.saveTimeout = setTimeout(saveDocument, 1000);
         },
@@ -128,10 +127,10 @@ const DocumentContent = ({ params }) => {
   };
 
   return (
-    <div className="flex flex-col h-full overflow-hidden">
-      <div className="flex justify-between items-center p-4 border-b">
-        <div className="flex items-center space-x-2">
-          <Button onClick={saveDocument} size="sm" variant="outline">
+    <div className="flex flex-col h-full overflow-hidden bg-white">
+      <div className="flex justify-between items-center p-4 border-b bg-gray-50">
+        <div className="flex items-center space-x-4">
+          <Button onClick={saveDocument} size="sm" variant="outline" className="bg-white hover:bg-gray-100">
             <Save className="w-4 h-4 mr-2" />
             Save
           </Button>

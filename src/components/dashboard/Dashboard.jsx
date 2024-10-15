@@ -16,7 +16,7 @@
     import DeleteWorkspaceModal from './DeleteWorkspaceModal';
     import SkeletonLoader from './SkeletonLoader';
     import NewWorkspaceButton from './NewWorkspaceButton';
-    import Footer from '@components/common/Footer';
+    import WorkspaceStats from './WorkspaceStats';
 
 
     const Dashboard = () => {

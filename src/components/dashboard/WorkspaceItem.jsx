@@ -11,7 +11,14 @@ import {
 } from '@/components/ui/dropdown-menu';
 import WorkspaceStats from './WorkspaceStats';
 
-const WorkspaceItem = ({ workspace, layout, setWorkspaceToDelete, setIsDeleteModalOpen, router }) => {
+const WorkspaceItem = ({
+  workspace,
+  layout,
+  setWorkspaceToDelete,
+  setIsDeleteModalOpen,
+  router,
+  documents, // Pass documents as a prop
+}) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   const ItemContent = () => (
@@ -59,7 +66,13 @@ const WorkspaceItem = ({ workspace, layout, setWorkspaceToDelete, setIsDeleteMod
       </DropdownMenuContent>
     </DropdownMenu>
   );
-  
+
+  const lastEdited = Array.isArray(documents) && documents.length > 0 
+  ? documents.reduce((latest, doc) => 
+      new Date(doc.lastEdited) > new Date(latest.lastEdited) ? doc : latest
+    ).lastEdited
+  : 'N/A'; // Fallback value if documents is empty or not an array
+
 
   return layout === 'grid' ? (
     <motion.div
@@ -80,7 +93,13 @@ const WorkspaceItem = ({ workspace, layout, setWorkspaceToDelete, setIsDeleteMod
         </Button>
         {renderDropdownMenu()}
       </div>
-      {isExpanded && <WorkspaceStats workspace={workspace} />}
+      {isExpanded && (
+        <WorkspaceStats 
+          workspace={workspace} 
+          documents={documents} 
+          lastEdited={lastEdited}
+        />
+      )}
     </motion.div>
   ) : (
     <motion.div
@@ -120,7 +139,14 @@ const WorkspaceItem = ({ workspace, layout, setWorkspaceToDelete, setIsDeleteMod
           {renderDropdownMenu()}
         </div>
       </div>
-      {isExpanded && <WorkspaceStats workspace={workspace} />}
+      {isExpanded && (
+      <WorkspaceStats 
+      workspace={workspace}
+      documents={documents}
+      lastEdited={lastEdited}
+    />
+     
+      )}
     </motion.div>
   );
 };

@@ -1,4 +1,3 @@
-    // lib/documentUtils.js
     import { collection, doc, onSnapshot, setDoc, updateDoc, deleteDoc, query, where } from 'firebase/firestore'
     import { db } from '@/config/firebaseConfig'
     import { toast } from 'sonner'
