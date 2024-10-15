@@ -17,8 +17,6 @@ const MAX_DOCUMENTS_COUNT = process.env.NEXT_PUBLIC_MAX_DOCUMENTS_COUNT || 5;
 const WorkspaceLayout = ({ params }) => {
   const [documents, setDocuments] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [image, setImage] = useState('/images/default-cover.png');
-  const [emojiIcon, setEmojiIcon] = useState(null);
   const [documentInfo, setDocumentInfo] = useState(null);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const { user } = useUser();
@@ -45,8 +43,6 @@ const WorkspaceLayout = ({ params }) => {
         if (docSnap.exists()) {
           const docData = docSnap.data();
           setDocumentInfo(docData);
-          setEmojiIcon(docData.emoji);
-          docData.cover && setImage(docData.cover);
         }
       });
     } catch (error) {
@@ -117,6 +113,8 @@ const WorkspaceLayout = ({ params }) => {
     try {
       const docRef = doc(db, 'documents', params.documentid);
       await setDoc(docRef, { [key]: value }, { merge: true });
+      // Update local state immediately
+      setDocumentInfo(prevInfo => ({ ...prevInfo, [key]: value }));
     } catch (error) {
       console.error('Error updating document:', error);
       toast.error('Failed to update document');
@@ -147,8 +145,6 @@ const WorkspaceLayout = ({ params }) => {
                 <Main 
                   params={params}
                   documentInfo={documentInfo}
-                  image={image}
-                  emojiIcon={emojiIcon}
                   updateDocument={updateDocument}
                   documents={documents}
                   handleCreateDocument={handleCreateDocument}

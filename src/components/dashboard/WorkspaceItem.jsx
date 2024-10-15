@@ -17,7 +17,7 @@ const WorkspaceItem = ({
   setWorkspaceToDelete,
   setIsDeleteModalOpen,
   router,
-  documents, // Pass documents as a prop
+  documents, 
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -112,7 +112,7 @@ const WorkspaceItem = ({
         <div className="flex items-center space-x-4">
           <div className="relative h-16 w-16 overflow-hidden rounded-lg">
             <Image
-              src={workspace.cover}
+              src={workspace.cover || "/images/default-cover.jpg"}
               alt={`${workspace.name} cover`}
               layout="fill"
               objectFit="cover"

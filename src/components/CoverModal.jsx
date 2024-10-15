@@ -102,9 +102,10 @@ function CoverModal({ children, setNewCover }) {
             </Button>
           </DialogClose>
           <DialogClose asChild>
-            <Button type="button" onClick={() => setNewCover(selectedCover)}>
-              Update
-            </Button>
+          <Button type="button" onClick={() => setNewCover(selectedCover)}>
+  Update
+</Button>
+
           </DialogClose>
         </DialogFooter>
       </DialogContent>

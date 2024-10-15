@@ -1,46 +1,49 @@
-'use client'
-
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { useAuth, useUser } from '@clerk/nextjs'
-import { db } from '@config/firebaseConfig'
-import { doc, setDoc } from 'firebase/firestore'
-import { v4 as uuidv4 } from 'uuid'
-import { motion } from 'framer-motion'
-import { toast } from 'sonner'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import CoverModal from '@/components/CoverModal'
-import { EmojiSelector } from '@/components/EmojiSelector'
-import Header from '@components/common/Header'
-import Footer from '@components/common/Footer'
+"use client"
+import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuth, useUser } from '@clerk/nextjs';
+import { db } from '@config/firebaseConfig';
+import { doc, setDoc } from 'firebase/firestore';
+import { v4 as uuidv4 } from 'uuid';
+import { motion } from 'framer-motion';
+import { toast } from 'sonner';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import CoverModal from '@/components/CoverModal';
+import { EmojiSelector } from '@/components/EmojiSelector';
+import Header from '@components/common/Header';
+import Footer from '@components/common/Footer';
 
 const SetupWorkspace = () => {
-  const [loading, setLoading] = useState(false)
-  const [image, setImage] = useState('/images/default-cover.jpg')
-  const [workspaceName, setWorkspaceName] = useState('')
-  const [emojiIcon, setEmojiIcon] = useState(null)
-  const [error, setError] = useState(null)
-  const { user } = useUser()
-  const { orgId } = useAuth()
-  const router = useRouter()
+  const [loading, setLoading] = useState(false);
+  const [image, setImage] = useState('/images/default-cover.jpg');
+  const [workspaceName, setWorkspaceName] = useState('');
+  const [emojiIcon, setEmojiIcon] = useState(null);
+  const [error, setError] = useState(null);
+  const { user } = useUser();
+  const { orgId } = useAuth();
+  const router = useRouter();
+
+  const handleImageChange = (newImage) => {
+    setImage(newImage);
+  };
 
   const createWorkspace = async () => {
-    setLoading(true)
-    setError(null)
-    const workspaceID = Date.now().toString()
+    setLoading(true);
+    setError(null);
+    const workspaceID = Date.now().toString();
 
     try {
       await setDoc(doc(db, 'workspaces', workspaceID), {
         id: workspaceID,
         name: workspaceName,
-        cover: image,
+        cover: image,  // This will now be the updated image
         emoji: emojiIcon,
         owner: user?.primaryEmailAddress?.emailAddress,
         organization: orgId || user?.primaryEmailAddress?.emailAddress,
         createdAt: new Date().toISOString(),
         lastUpdated: new Date().toISOString(),
-      })
+      });
 
       const documentID = uuidv4()
       await setDoc(doc(db, 'documents', documentID), {
@@ -50,7 +53,7 @@ const SetupWorkspace = () => {
         name: 'Untitled Document',
         cover: null,
         emoji: null,
-        documentOutput: [],
+        documentOutput: [], 
         createdAt: new Date().toISOString(),
       })
 
@@ -59,16 +62,16 @@ const SetupWorkspace = () => {
         output: [],
       })
 
-      toast.success('Workspace created successfully')
-      router.push(`/workspace/${workspaceID}/${documentID}`)
+      toast.success('Workspace created successfully');
+      router.push(`/workspace/${workspaceID}/${documentID}`);
     } catch (error) {
-      console.error('Error creating workspace:', error)
-      setError('Failed to create workspace. Please try again.')
-      toast.error('Failed to create workspace')
+      console.error('Error creating workspace:', error);
+      setError('Failed to create workspace. Please try again.');
+      toast.error('Failed to create workspace');
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
@@ -80,7 +83,7 @@ const SetupWorkspace = () => {
           transition={{ duration: 0.5 }}
           className="rounded-lg bg-white shadow-lg p-8"
         >
-          <CoverModal setNewCover={setImage}>
+          <CoverModal setNewCover={handleImageChange}>
             <div className="relative mb-6 cursor-pointer">
               <img src={image} alt="Workspace cover" className="h-48 w-full rounded-lg object-cover transition-opacity duration-300 hover:opacity-80" />
               <p className="absolute inset-0 flex items-center justify-center bg-black/60 text-lg font-semibold text-white opacity-0 transition-opacity duration-300 hover:opacity-100">

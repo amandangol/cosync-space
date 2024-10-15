@@ -6,6 +6,7 @@ import DocumentContent from './DocumentContent';
 import CoverModal from '../CoverModal';
 import { EmojiSelector } from '@components/EmojiSelector';
 import { Tooltip } from '@/components/ui/tooltip';
+import { toast } from 'sonner';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,7 +14,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 
-const Main = ({ params, documentInfo, image, emojiIcon, updateDocument, documents, handleCreateDocument, handleDeleteDocument, user, router, isCollapsed }) => {
+const Main = ({ params, documentInfo, updateDocument, documents, handleCreateDocument, handleDeleteDocument, user, router }) => {
   const [isEditing, setIsEditing] = useState(false);
 
   const handleShare = () => {
@@ -101,11 +102,13 @@ const Main = ({ params, documentInfo, image, emojiIcon, updateDocument, document
       <div className="sticky top-0 z-10 bg-white shadow-sm">
         <div className="relative h-32 w-full overflow-hidden">
           <Image
-            src={image || "/images/default-cover.png"}
+            src={documentInfo?.cover || "/images/default-cover.jpg"}
             alt="Document cover"
             layout="fill"
             objectFit="cover"
           />
+
+
           <CoverModal setNewCover={cover => updateDocument('cover', cover)}>
             <Button variant="ghost" className="absolute bottom-2 right-2 bg-white/80 hover:bg-white rounded-md">
               Change Cover
@@ -113,11 +116,11 @@ const Main = ({ params, documentInfo, image, emojiIcon, updateDocument, document
           </CoverModal>
         </div>
         <div className="flex items-center justify-between px-6 py-2 border-b">
-          <div className="flex items-center space-x-4">
-            <EmojiSelector
-              setEmojiIcon={emoji => updateDocument('emoji', emoji)}
-              emojiIcon={emojiIcon || "📄"}
-            />
+        <div className="flex items-center space-x-4">
+          <EmojiSelector
+            setEmojiIcon={emoji => updateDocument('emoji', emoji)}
+            emojiIcon={documentInfo?.emoji || "📄"}
+          />
             {isEditing ? (
               <input
                 type="text"
