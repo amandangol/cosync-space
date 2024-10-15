@@ -11,7 +11,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Tooltip } from '@/components/ui/tooltip';
 
-const MAX_DOCUMENTS_COUNT = process.env.NEXT_PUBLIC_MAX_DOCUMENTS_COUNT || 5;
+const MAX_DOCUMENTS_COUNT = process.env.NEXT_PUBLIC_MAX_DOCUMENTS_COUNT || 8;
 
 const Sidebar = ({ documents = [], loading, params, handleCreateDocument, handleDeleteDocument, router, isCollapsed, toggleSidebar }) => {
   return (
