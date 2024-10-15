@@ -41,7 +41,7 @@ const Header = () => {
           className="text-indigo-600"
         />
       </Link>
-        <div className="hidden md:block">
+        {/* <div className="hidden md:block">
           <Link href="/cosyncspace-dashboard">
             <Button variant="outline" className="mr-2 border-gray-700 text-black hover:bg-gray-300">
               Log In
@@ -52,7 +52,7 @@ const Header = () => {
               Sign Up
             </Button>
           </Link>
-        </div>
+        </div> */}
         <button
           className="md:hidden"
           onClick={() => setIsMenuOpen(!isMenuOpen)}
