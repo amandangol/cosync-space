@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
-import { MoreVertical, Trash2 } from 'lucide-react';
+import { MoreVertical, Trash2, ChevronDown, ChevronUp, Edit } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -17,7 +17,8 @@ const WorkspaceItem = ({
   setWorkspaceToDelete,
   setIsDeleteModalOpen,
   router,
-  documents, 
+  documents,
+  onRename,
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -28,11 +29,11 @@ const WorkspaceItem = ({
         onClick={() => router.push(`/workspace/${workspace.id}`)}
       >
         <Image
-          src={workspace.cover}
+          src={workspace.cover || "/images/default-cover.jpg"}
           alt={`${workspace.name} cover`}
           layout="fill"
           objectFit="cover"
-          className="transition-transform duration-300 group-hover:scale-110"
+          className="transition-transform duration-300 group-hover:scale-105"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
       </div>
@@ -41,20 +42,25 @@ const WorkspaceItem = ({
           <h2 className="text-xl font-semibold text-gray-900">{workspace.name}</h2>
           <span className="text-2xl">{workspace.emoji}</span>
         </div>
-        <p className="mt-2 text-sm text-gray-500">{workspace.description}</p>
+        <p className="mt-2 text-sm text-gray-500 line-clamp-2">{workspace.description}</p>
       </div>
     </>
   );
 
   const renderDropdownMenu = () => (
     <DropdownMenu>
-      <DropdownMenuTrigger className="rounded-full p-1 transition-colors hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2">
-        <MoreVertical className="h-5 w-5 text-gray-500" />
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" size="icon" className="h-8 w-8">
+          <MoreVertical className="h-4 w-4" />
+        </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
+        <DropdownMenuItem onClick={() => onRename(workspace)}>
+          <Edit className="mr-2 h-4 w-4" />
+          <span>Rename</span>
+        </DropdownMenuItem>
         <DropdownMenuItem
-          onClick={(e) => {
-            e.stopPropagation(); // Stop the click event from propagating
+          onClick={() => {
             setWorkspaceToDelete(workspace);
             setIsDeleteModalOpen(true);
           }}
@@ -67,13 +73,6 @@ const WorkspaceItem = ({
     </DropdownMenu>
   );
 
-  const lastEdited = Array.isArray(documents) && documents.length > 0 
-  ? documents.reduce((latest, doc) => 
-      new Date(doc.lastEdited) > new Date(latest.lastEdited) ? doc : latest
-    ).lastEdited
-  : 'N/A'; // Fallback value if documents is empty or not an array
-
-
   return layout === 'grid' ? (
     <motion.div
       initial={{ opacity: 0, scale: 0.9 }}
@@ -82,33 +81,34 @@ const WorkspaceItem = ({
       className="group overflow-hidden rounded-lg bg-white shadow-lg transition-all hover:shadow-xl"
     >
       <ItemContent />
-      <div className="flex justify-between p-4">
+      <div className="flex justify-between items-center px-4 py-2 bg-gray-50">
         <Button
           variant="ghost"
           size="sm"
           onClick={() => setIsExpanded(!isExpanded)}
           className="text-purple-600 hover:text-purple-700"
         >
-          {isExpanded ? 'Hide Stats' : 'Show Stats'}
+          {isExpanded ? <ChevronUp className="h-4 w-4 mr-1" /> : <ChevronDown className="h-4 w-4 mr-1" />}
+          {isExpanded ? 'Less' : 'More'}
         </Button>
         {renderDropdownMenu()}
       </div>
       {isExpanded && (
-        <WorkspaceStats 
-          workspace={workspace} 
-          documents={documents} 
-          lastEdited={lastEdited}
+        <WorkspaceStats
+          workspace={workspace}
+          documents={documents || []}
+          lastEdited={documents && documents.length > 0 ? documents[0].lastEdited : 'N/A'}
         />
       )}
     </motion.div>
-  ) : (
+  ) :  (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
-      className="group rounded-lg bg-white p-4 shadow-md transition-all hover:shadow-lg"
+      className="group rounded-lg bg-white shadow-md transition-all hover:shadow-lg"
     >
-      <div className="flex cursor-pointer items-center justify-between" onClick={() => router.push(`/workspace/${workspace.id}`)}>
+      <div className="flex cursor-pointer items-center justify-between p-4" onClick={() => router.push(`/workspace/${workspace.id}`)}>
         <div className="flex items-center space-x-4">
           <div className="relative h-16 w-16 overflow-hidden rounded-lg">
             <Image
@@ -120,7 +120,7 @@ const WorkspaceItem = ({
           </div>
           <div>
             <h2 className="text-lg font-semibold text-gray-900">{workspace.name}</h2>
-            <p className="text-sm text-gray-500">{workspace.description}</p>
+            <p className="text-sm text-gray-500 line-clamp-1">{workspace.description}</p>
           </div>
         </div>
         <div className="flex items-center space-x-2">
@@ -134,19 +134,19 @@ const WorkspaceItem = ({
             }}
             className="text-purple-600 hover:text-purple-700"
           >
-            {isExpanded ? 'Hide Stats' : 'Show Stats'}
+            {isExpanded ? <ChevronUp className="h-4 w-4 mr-1" /> : <ChevronDown className="h-4 w-4 mr-1" />}
+            {isExpanded ? 'Less' : 'More'}
           </Button>
           {renderDropdownMenu()}
         </div>
       </div>
-      {isExpanded && (
-      <WorkspaceStats 
-      workspace={workspace}
-      documents={documents}
-      lastEdited={lastEdited}
+{isExpanded && (
+  <WorkspaceStats
+    workspace={workspace}
+    documents={documents}
+    lastEdited={documents && documents.length > 0 ? documents[0].lastEdited : 'N/A'}
     />
-     
-      )}
+)}
     </motion.div>
   );
 };

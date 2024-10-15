@@ -14,13 +14,15 @@ import { Tooltip } from '@/components/ui/tooltip';
 const MAX_DOCUMENTS_COUNT = process.env.NEXT_PUBLIC_MAX_DOCUMENTS_COUNT || 8;
 
 const Sidebar = ({ documents = [], loading, params, handleCreateDocument, handleDeleteDocument, router, isCollapsed, toggleSidebar }) => {
+  const documentCount = documents.length;
+
   return (
     <aside 
       className={`bg-gray-50 text-gray-800 transition-all duration-300 h-screen flex flex-col
         ${isCollapsed ? 'w-16' : 'w-64'} border-r border-gray-200`}
     >
       <div className={`flex items-center justify-between border-b border-gray-300 p-4 ${isCollapsed ? 'flex-col' : ''}`}>
-        {!isCollapsed && <h1 className="text-xl font-bold">DocuMentor</h1>}
+        {!isCollapsed && <h1 className="text-xl font-bold">Workspace</h1>}
         <Tooltip content={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}>
           <Button onClick={toggleSidebar} variant="ghost" size="sm">
             {isCollapsed ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
@@ -33,6 +35,9 @@ const Sidebar = ({ documents = [], loading, params, handleCreateDocument, handle
             <Button onClick={handleCreateDocument} size="sm" className="bg-blue-500 hover:bg-blue-600 text-white">
               {loading ? <Loader className="h-4 w-4 animate-spin" /> : <FolderPlus size={16} />}
             </Button>
+          </Tooltip>
+          <Tooltip content={`${documentCount} document${documentCount !== 1 ? 's' : ''}`}>
+            <div className="text-sm font-medium text-gray-600">{documentCount}</div>
           </Tooltip>
           {documents.map(doc => (
             <Tooltip key={doc?.id} content={doc.name}>
@@ -60,13 +65,13 @@ const Sidebar = ({ documents = [], loading, params, handleCreateDocument, handle
             />
           </div>
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold">My Workspace</h2>
+            <h2 className="text-lg font-semibold">My Documents ({documentCount})</h2>
             <Button onClick={handleCreateDocument} size="sm" className="bg-blue-500 hover:bg-blue-600 text-white">
               {loading ? <Loader className="h-4 w-4 animate-spin" /> : <FolderPlus size={16} />}
             </Button>
           </div>
           <nav className="flex-grow overflow-y-auto space-y-2 mb-4">
-            {documents.length > 0 ? (
+            {documentCount > 0 ? (
               documents.map(doc => (
                 <div
                   key={doc?.id}
@@ -100,11 +105,11 @@ const Sidebar = ({ documents = [], loading, params, handleCreateDocument, handle
           </nav>
           <div className="mt-auto">
             <Progress
-              value={(documents.length / MAX_DOCUMENTS_COUNT) * 100}
+              value={(documentCount / MAX_DOCUMENTS_COUNT) * 100}
               className="h-2 rounded-full bg-gray-200 mb-2"
             />
             <p className="text-sm text-gray-600 mb-2">
-              {documents.length} out of {MAX_DOCUMENTS_COUNT} files used
+              {documentCount} out of {MAX_DOCUMENTS_COUNT} files used
             </p>
             <Button variant="outline" size="sm" className="w-full border-gray-300 text-gray-800 hover:bg-gray-100">
               <Settings size={16} className="mr-2" />

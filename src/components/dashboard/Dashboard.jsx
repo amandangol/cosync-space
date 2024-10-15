@@ -2,7 +2,7 @@
     import React, { Suspense, useState, useEffect, useCallback } from 'react';
     import { useAuth, useUser } from '@clerk/nextjs';
     import { db } from '@config/firebaseConfig';
-    import { collection, deleteDoc, doc, onSnapshot, query, where } from 'firebase/firestore';
+    import { collection, deleteDoc, doc, onSnapshot, query, where,updateDoc } from 'firebase/firestore';
     import { toast } from 'sonner';
     import { motion, AnimatePresence } from 'framer-motion';
     import { useRouter } from 'next/navigation';
@@ -25,6 +25,7 @@
     const [searchTerm, setSearchTerm] = useState('');
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [workspaceToDelete, setWorkspaceToDelete] = useState(null);
+
     const [isLoading, setIsLoading] = useState(true);
     const [sortBy, setSortBy] = useState('lastUpdated');
 
@@ -37,12 +38,20 @@
         if (savedLayout) {
         setLayout(savedLayout);
         }
+        const savedSortBy = localStorage.getItem('workspaceSortBy');
+    if (savedSortBy) {
+      setSortBy(savedSortBy);
+    }
     }, []);
 
     const handleLayoutChange = (newLayout) => {
         setLayout(newLayout);
         localStorage.setItem('workspaceLayout', newLayout);
     };
+    const handleSortChange = (newSortBy) => {
+        setSortBy(newSortBy);
+        localStorage.setItem('workspaceSortBy', newSortBy);
+      };
 
     const fetchWorkspaceList = useCallback(() => {
         if (!user) return;
@@ -85,6 +94,23 @@
         setFilteredList(filtered);
     };
 
+    const onRenameWorkspace = async (workspaceId, newName) => {
+        try {
+            const workspaceRef = doc(db, 'workspaces', workspaceId);
+            await updateDoc(workspaceRef, { name: newName });
+          setWorkspaceList(prevList =>
+            prevList.map(workspace =>
+              workspace.id === workspaceId ? { ...workspace, name: newName } : workspace
+            )
+          );      
+          toast.success('Workspace renamed successfully');
+        } catch (error) {
+          console.error('Error renaming workspace:', error);
+          toast.error('Failed to rename workspace');
+        }
+      };
+      
+
     return (
         <div className="min-h-screen bg-gray-100">
           <Header />
@@ -100,12 +126,12 @@
                 <NewWorkspaceButton />
               </div>
             <div className="mb-6 flex flex-col space-y-4 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
-                <SearchBar
-                searchTerm={searchTerm}
-                handleSearch={handleSearch}
-                sortBy={sortBy}
-                setSortBy={setSortBy}
-                />
+            <SearchBar
+            searchTerm={searchTerm}
+            handleSearch={handleSearch}
+            sortBy={sortBy}
+            setSortBy={handleSortChange}
+            />
                 <LayoutToggle layout={layout} handleLayoutChange={handleLayoutChange} />
             </div>
             <AnimatePresence mode="wait">
@@ -121,6 +147,7 @@
                     sortBy={sortBy}
                     setWorkspaceToDelete={setWorkspaceToDelete}
                     setIsDeleteModalOpen={setIsDeleteModalOpen}
+                    onRenameWorkspace={onRenameWorkspace}
                     router={router}
                 />
                 )}

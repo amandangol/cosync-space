@@ -12,7 +12,7 @@ import Main from './Main';
 import CommentSection from './CommentSection';
 import { getUsersFromFirestore, getMentionSuggestions } from '@/lib/userUtils';
 
-const MAX_DOCUMENTS_COUNT = process.env.NEXT_PUBLIC_MAX_DOCUMENTS_COUNT || 5;
+const MAX_DOCUMENTS_COUNT = process.env.NEXT_PUBLIC_MAX_DOCUMENTS_COUNT || 8;
 
 const WorkspaceLayout = ({ params }) => {
   const [documents, setDocuments] = useState([]);

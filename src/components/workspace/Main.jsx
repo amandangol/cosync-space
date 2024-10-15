@@ -50,6 +50,10 @@ const Main = ({ params, documentInfo, updateDocument, documents, handleCreateDoc
       toast.error('Failed to copy link');
     });
   };
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return isNaN(date.getTime()) ? 'Never' : date.toLocaleDateString();
+  };
 
   const handleDownload = async () => {
     if (!documentInfo) return;
@@ -109,7 +113,7 @@ const Main = ({ params, documentInfo, updateDocument, documents, handleCreateDoc
                       {doc.name || "Untitled Document"}
                     </span>
                     <span className="text-sm text-gray-500 mt-2">
-                      Last edited: {new Date(doc.lastEdited).toLocaleDateString()}
+                    Last edited: {formatDate(doc.lastEdited)}
                     </span>
                   </Button>
                 ))}
