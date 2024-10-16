@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
+import { motion, AnimatePresence } from 'framer-motion';
 import { PlusCircle, FileText, Share2, Download, Trash2, Edit, ChevronDown, Bold, Italic, Underline, AlignLeft, AlignCenter, AlignRight, List, ListOrdered } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import DocumentContent from './DocumentContent';
@@ -50,14 +51,15 @@ const Main = ({ params, documentInfo, updateDocument, documents, handleCreateDoc
       toast.error('Failed to copy link');
     });
   };
+  
   const formatDate = (dateString) => {
+    if (!dateString) return 'Never';
     const date = new Date(dateString);
-    return isNaN(date.getTime()) ? 'Never' : date.toLocaleDateString();
+    return isNaN(date.getTime()) ? 'Never' : date.toLocaleString();
   };
 
   const handleDownload = async () => {
     if (!documentInfo) return;
-
     // TODO: Implement .docx conversion logic here
     // For now, we'll just download the JSON as before
     const content = JSON.stringify(documentInfo, null, 2);
@@ -75,14 +77,36 @@ const Main = ({ params, documentInfo, updateDocument, documents, handleCreateDoc
 
   if (!params?.documentid) {
     return (
-      <div className="flex flex-col h-full items-center justify-center p-6 bg-gray-50">
+      <motion.div 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
+        className="flex flex-col h-full items-center justify-center p-6 bg-gray-50"
+      >
         <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold mb-2 text-gray-800">Welcome to Your Workspace</h2>
-          <p className="text-xl text-gray-600">
+          <motion.h2 
+            initial={{ y: -20 }}
+            animate={{ y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="text-3xl font-bold mb-2 text-gray-800"
+          >
+            Welcome to Your Workspace
+          </motion.h2>
+          <motion.p 
+            initial={{ y: -20 }}
+            animate={{ y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="text-xl text-gray-600"
+          >
             Get started by creating a new document or selecting an existing one.
-          </p>
+          </motion.p>
         </div>
-        <div className="flex flex-wrap justify-center gap-4">
+        <motion.div 
+          initial={{ scale: 0.9 }}
+          animate={{ scale: 1 }}
+          transition={{ delay: 0.4 }}
+          className="flex flex-wrap justify-center gap-4"
+        >
           <Button
             onClick={handleCreateDocument}
             className="flex items-center bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 text-lg rounded-lg transition-transform duration-200 transform hover:scale-105"
@@ -91,83 +115,114 @@ const Main = ({ params, documentInfo, updateDocument, documents, handleCreateDoc
             Create New Document
           </Button>
           {documents.length > 0 && (
-            <div className="flex flex-col items-center mt-8 w-full max-w-5xl">
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5 }}
+              className="flex flex-col items-center mt-8 w-full max-w-5xl"
+            >
               <h3 className="text-2xl font-semibold mb-4 text-gray-700">
                 Recent Documents:
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
-                {documents.slice(0, 6).map(doc => (
-                  <Button
+                {documents.slice(0, 6).map((doc, index) => (
+                  <motion.div
                     key={doc.id}
-                    variant="outline"
-                    className="w-full flex flex-col items-start justify-start p-6 h-auto hover:bg-gray-50 hover:shadow-lg transition-all duration-300 rounded-lg border border-gray-200"
-                    onClick={() =>
-                      router.push(`/workspace/${params?.workspaceid}/${doc?.id}`)
-                    }
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.1 * index }}
                   >
-                    <div className="flex items-center justify-between w-full mb-4">
-                      <span className="text-3xl">{doc.emoji || "📄"}</span>
-                      <FileText className="text-gray-400" size={20} />
-                    </div>
-                    <span className="font-medium text-lg text-gray-800">
-                      {doc.name || "Untitled Document"}
-                    </span>
-                    <span className="text-sm text-gray-500 mt-2">
-                    Last edited: {formatDate(doc.lastEdited)}
-                    </span>
-                  </Button>
+                    <Button
+                      variant="outline"
+                      className="w-full flex flex-col items-start justify-start p-6 h-auto hover:bg-gray-50 hover:shadow-lg transition-all duration-300 rounded-lg border border-gray-200"
+                      onClick={() =>
+                        router.push(`/workspace/${params?.workspaceid}/${doc?.id}`)
+                      }
+                    >
+                      <div className="flex items-center justify-between w-full mb-4">
+                        <span className="text-3xl">{doc.emoji || "📄"}</span>
+                        <FileText className="text-gray-400" size={20} />
+                      </div>
+                      <span className="font-medium text-lg text-gray-800">
+                        {doc.name || "Untitled Document"}
+                      </span>
+                      <span className="text-sm text-gray-500 mt-2">
+                      Last edited: {formatDate(doc.lastEdited)}
+                      </span>
+                    </Button>
+                  </motion.div>
                 ))}
               </div>
-            </div>
+            </motion.div>
           )}
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
     );
   }
   
   return (
-    <div className="flex flex-col h-full bg-white">
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+      className="flex flex-col h-full bg-white"
+    >
       <div className="sticky top-0 z-10 bg-white shadow-sm">
-        <div className="relative h-32 w-full overflow-hidden">
+        <motion.div 
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="relative h-32 w-full overflow-hidden"
+        >
           <Image
             src={documentInfo?.cover || "/images/default-cover.jpg"}
             alt="Document cover"
             layout="fill"
             objectFit="cover"
           />
-
-
           <CoverModal setNewCover={cover => updateDocument('cover', cover)}>
             <Button variant="ghost" className="absolute bottom-2 right-2 bg-white/80 hover:bg-white rounded-md">
               Change Cover
             </Button>
           </CoverModal>
-        </div>
-        <div className="flex items-center justify-between px-6 py-2 border-b">
-        <div className="flex items-center space-x-4">
-          <EmojiSelector
-            setEmojiIcon={emoji => updateDocument('emoji', emoji)}
-            emojiIcon={documentInfo?.emoji || "📄"}
-          />
-          {isEditing ? (
-            <input
-              type="text"
-              value={editedName}
-              onChange={handleNameChange}
-              onBlur={handleNameSubmit}
-              onKeyDown={handleNameKeyDown}
-              autoFocus
-              className="text-2xl font-bold outline-none bg-gray-100 px-2 py-1 rounded-md"
+        </motion.div>
+        <motion.div 
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="flex items-center justify-between px-6 py-2 border-b"
+        >
+          <div className="flex items-center space-x-4">
+            <EmojiSelector
+              setEmojiIcon={emoji => updateDocument('emoji', emoji)}
+              emojiIcon={documentInfo?.emoji || "📄"}
             />
-          ) : (
-            <h1
-              className="text-2xl font-bold cursor-pointer hover:bg-gray-100 px-2 py-1 rounded-md transition-colors duration-200"
-              onClick={handleRename}
-            >
-              {documentInfo?.name || "Untitled Document"}
-            </h1>
-          )}
-        </div>
+            <AnimatePresence>
+              {isEditing ? (
+                <motion.input
+                  initial={{ opacity: 0, width: 0 }}
+                  animate={{ opacity: 1, width: 'auto' }}
+                  exit={{ opacity: 0, width: 0 }}
+                  type="text"
+                  value={editedName}
+                  onChange={handleNameChange}
+                  onBlur={handleNameSubmit}
+                  onKeyDown={handleNameKeyDown}
+                  autoFocus
+                  className="text-2xl font-bold outline-none bg-gray-100 px-2 py-1 rounded-md"
+                />
+              ) : (
+                <motion.h1
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="text-2xl font-bold cursor-pointer hover:bg-gray-100 px-2 py-1 rounded-md transition-colors duration-200"
+                  onClick={handleRename}
+                >
+                  {documentInfo?.name || "Untitled Document"}
+                </motion.h1>
+              )}
+            </AnimatePresence>
+          </div>
           <div className="flex items-center space-x-2">
             <Tooltip content="Share">
               <Button variant="ghost" size="icon" onClick={handleShare} className="hover:bg-gray-100 rounded-full">
@@ -190,25 +245,17 @@ const Main = ({ params, documentInfo, updateDocument, documents, handleCreateDoc
                   <Edit className="mr-2 h-4 w-4" />
                   Rename
                 </DropdownMenuItem>
-                
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
-        </div>
-        {/* <div className="flex items-center space-x-2 px-6 py-2 border-b">
-          <Button variant="ghost" size="sm"><Bold className="h-4 w-4" /></Button>
-          <Button variant="ghost" size="sm"><Italic className="h-4 w-4" /></Button>
-          <Button variant="ghost" size="sm"><Underline className="h-4 w-4" /></Button>
-          <div className="h-6 w-px bg-gray-300 mx-2" />
-          <Button variant="ghost" size="sm"><AlignLeft className="h-4 w-4" /></Button>
-          <Button variant="ghost" size="sm"><AlignCenter className="h-4 w-4" /></Button>
-          <Button variant="ghost" size="sm"><AlignRight className="h-4 w-4" /></Button>
-          <div className="h-6 w-px bg-gray-300 mx-2" />
-          <Button variant="ghost" size="sm"><List className="h-4 w-4" /></Button>
-          <Button variant="ghost" size="sm"><ListOrdered className="h-4 w-4" /></Button>
-        </div> */}
+        </motion.div>
       </div>
-      <div className="flex-grow overflow-auto">
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.4 }}
+        className="flex-grow overflow-auto"
+      >
         <div className="max-w-4xl mx-auto my-8 p-8 bg-white shadow-lg rounded-lg">
           <DocumentContent
             params={params}
@@ -217,8 +264,8 @@ const Main = ({ params, documentInfo, updateDocument, documents, handleCreateDoc
             updateDocument={updateDocument}
           />
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }
 

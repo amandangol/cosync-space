@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Loader, FileText, MoreVertical, Search, FolderPlus, Settings, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
@@ -10,27 +10,69 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import { Tooltip } from '@/components/ui/tooltip';
+import { db } from '@config/firebaseConfig';
+import { doc, getDoc } from 'firebase/firestore';
+import { motion, AnimatePresence } from 'framer-motion';
+
 
 const MAX_DOCUMENTS_COUNT = process.env.NEXT_PUBLIC_MAX_DOCUMENTS_COUNT || 8;
 
 const Sidebar = ({ documents = [], loading, params, handleCreateDocument, handleDeleteDocument, router, isCollapsed, toggleSidebar }) => {
   const documentCount = documents.length;
+  const [workspaceName, setWorkspaceName] = useState('Loading...');
+
+  useEffect(() => {
+    if (params?.workspaceid) {
+      getWorkspaceName();
+    }
+  }, [params]);
+
+  const getWorkspaceName = async () => {
+    try {
+      const workspaceRef = doc(db, 'workspaces', String(params?.workspaceid));
+      const workspaceSnap = await getDoc(workspaceRef);
+      
+      if (workspaceSnap.exists()) {
+        setWorkspaceName(workspaceSnap.data().name);
+      } else {
+        setWorkspaceName('Untitled Workspace');
+      }
+    } catch (error) {
+      console.error('Error fetching workspace name:', error);
+      setWorkspaceName('Untitled Workspace');
+    }
+  };
 
   return (
-    <aside 
-      className={`bg-gray-50 text-gray-800 transition-all duration-300 h-screen flex flex-col
-        ${isCollapsed ? 'w-16' : 'w-64'} border-r border-gray-200`}
+    <motion.aside 
+      initial={{ width: isCollapsed ? 64 : 256, opacity: 0 }}
+      animate={{ width: isCollapsed ? 64 : 256, opacity: 1 }}
+      exit={{ width: 0, opacity: 0 }}
+      transition={{ duration: 0.3 }}
+      className={`bg-gray-50 text-gray-800 h-screen flex flex-col border-r border-gray-200`}
     >
-      <div className={`flex items-center justify-between border-b border-gray-300 p-4 ${isCollapsed ? 'flex-col' : ''}`}>
-        {!isCollapsed && <h1 className="text-xl font-bold">Workspace</h1>}
+      <motion.div 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.2 }}
+        className={`flex items-center justify-between border-b border-gray-300 p-4 ${isCollapsed ? 'flex-col' : ''}`}
+      >
+        {!isCollapsed && <h1 className="text-xl font-bold truncate">{workspaceName}</h1>}
         <Tooltip content={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}>
           <Button onClick={toggleSidebar} variant="ghost" size="sm">
             {isCollapsed ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
           </Button>
         </Tooltip>
-      </div>
-      {isCollapsed ? (
-        <div className="flex flex-col items-center py-4 space-y-4">
+      </motion.div>
+      <AnimatePresence>
+        {isCollapsed ? (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="flex flex-col items-center py-4 space-y-4"
+          >
           <Tooltip content="Create new document">
             <Button onClick={handleCreateDocument} size="sm" className="bg-blue-500 hover:bg-blue-600 text-white">
               {loading ? <Loader className="h-4 w-4 animate-spin" /> : <FolderPlus size={16} />}
@@ -53,9 +95,15 @@ const Sidebar = ({ documents = [], loading, params, handleCreateDocument, handle
               </Button>
             </Tooltip>
           ))}
-        </div>
+          </motion.div>
       ) : (
-        <div className="flex flex-col h-full overflow-hidden p-4">
+        <motion.div 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.3 }}
+        className="flex flex-col h-full overflow-hidden p-4"
+      >
           <div className="relative mb-4">
             <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-500" size={16} />
             <Input
@@ -116,9 +164,11 @@ const Sidebar = ({ documents = [], loading, params, handleCreateDocument, handle
               Upgrade Plan
             </Button>
           </div>
-        </div>
+          </motion.div>
       )}
-    </aside>
+            </AnimatePresence>
+
+            </motion.aside>
   );
 };
 

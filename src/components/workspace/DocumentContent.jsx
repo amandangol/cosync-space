@@ -14,8 +14,10 @@ import Alert from 'editorjs-alert';
 import SimpleImage from 'simple-image-editorjs';
 import { Button } from '@/components/ui/button';
 import { Save, Clock } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
-const DocumentContent = ({ params, documentInfo, updateDocument, currentFormat, setCurrentFormat }) => {
+
+const DocumentContent = ({ params, documentInfo, updateDocument }) => {
   const [isEditorReady, setIsEditorReady] = useState(false);
   const [lastSaved, setLastSaved] = useState(null);
   const editorRef = useRef(null);
@@ -27,54 +29,23 @@ const DocumentContent = ({ params, documentInfo, updateDocument, currentFormat, 
       initializeEditor();
     }
   }, [user, isEditorReady, params?.documentid]);
-
   useEffect(() => {
-    if (isEditorReady && currentFormat) {
-      applyFormatting(currentFormat);
+    if (lastSaved) {
+      updateDocument('lastEdited', lastSaved);
     }
-  }, [currentFormat, isEditorReady]);
-
-  const applyFormatting = (format) => {
-    if (!editorRef.current) return;
-
-    const editor = editorRef.current;
-
-    switch (format) {
-      case 'bold':
-      case 'italic':
-        // For inline styles, we need to use the inline toolbar
-        editor.blocks.getBlockByIndex(editor.blocks.getCurrentBlockIndex())
-          .querySelector('.ce-paragraph')
-          .dispatchEvent(new KeyboardEvent('keydown', {
-            'key': format === 'bold' ? 'b' : 'i',
-            'ctrlKey': true,
-            'bubbles': true
-          }));
-        break;
-      case 'left':
-      case 'center':
-      case 'right':
-        editor.blocks.getBlockByIndex(editor.blocks.getCurrentBlockIndex()).setAlignment(format);
-        break;
-      case 'unordered-list':
-      case 'ordered-list':
-        editor.blocks.insert('list', { style: format === 'unordered-list' ? 'unordered' : 'ordered' });
-        break;
-    }
-
-    setCurrentFormat(null);
-  };
+  }, [lastSaved, updateDocument]);
 
   const saveDocument = async () => {
     if (!editorRef.current) return;
     const outputData = await editorRef.current.save();
     const documentRef = doc(db, 'documentOutput', params?.documentid);
+    const now = new Date().toISOString();
     await updateDoc(documentRef, {
       output: JSON.stringify(outputData),
       editedBy: user?.primaryEmailAddress?.emailAddress,
-      lastEdited: new Date().toISOString(),
+      lastEdited: now,
     });
-    setLastSaved(new Date().toLocaleTimeString());
+    setLastSaved(now);
   };
 
   const fetchDocumentOutput = () => {
@@ -88,7 +59,7 @@ const DocumentContent = ({ params, documentInfo, updateDocument, currentFormat, 
         if (isNewEdit || !isFetchedRef.current) {
           editorRef.current?.render(parsedOutput);
           isFetchedRef.current = true;
-          setLastSaved(new Date(lastEdited).toLocaleTimeString());
+          setLastSaved(lastEdited);
         }
       } catch (error) {
         console.error('Error parsing document output:', error);
@@ -164,25 +135,48 @@ const DocumentContent = ({ params, documentInfo, updateDocument, currentFormat, 
   };
 
   return (
-    <div className="flex flex-col h-full overflow-hidden bg-white">
-      <div className="flex justify-between items-center p-4 border-b bg-gray-50">
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.5 }}
+      className="flex flex-col h-full overflow-hidden bg-white"
+    >
+      <motion.div 
+        initial={{ y: -20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ delay: 0.2 }}
+        className="flex justify-between items-center p-4 border-b bg-gray-50"
+      >
         <div className="flex items-center space-x-4">
           <Button onClick={saveDocument} size="sm" variant="outline" className="bg-white hover:bg-gray-100">
             <Save className="w-4 h-4 mr-2" />
             Save
           </Button>
-          {lastSaved && (
-            <span className="text-sm text-gray-500 flex items-center">
-              <Clock className="w-4 h-4 mr-1" />
-              Last saved at {lastSaved}
-            </span>
-          )}
+          <AnimatePresence>
+            {lastSaved && (
+              <motion.span 
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                className="text-sm text-gray-500 flex items-center"
+              >
+                <Clock className="w-4 h-4 mr-1" />
+                Last saved: {new Date(lastSaved).toLocaleString()}
+              </motion.span>
+            )}
+          </AnimatePresence>
         </div>
-      </div>
-      <div className="flex-grow overflow-auto">
+      </motion.div>
+      <motion.div 
+        initial={{ y: 20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ delay: 0.3 }}
+        className="flex-grow overflow-auto"
+      >
         <div id="editorjs" className="editor-wrapper min-h-full p-8" />
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 };
 
