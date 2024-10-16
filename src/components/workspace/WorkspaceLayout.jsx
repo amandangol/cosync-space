@@ -2,22 +2,19 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@clerk/nextjs';
 import { ClientSideSuspense, LiveblocksProvider, RoomProvider } from '@liveblocks/react';
-import { db } from '@/config/firebaseConfig';
-import { collection, doc, onSnapshot, query, setDoc, where, deleteDoc } from 'firebase/firestore';
 import { toast } from 'sonner';
-import { v4 as uuidv4 } from 'uuid';
 import { motion, AnimatePresence } from 'framer-motion';
 
 import Sidebar from '@components/workspace/Sidebar';
 import Main from '@components/workspace/Main';
 import CommentSection from '@components/workspace/CommentSection';
-import { getUsersFromFirestore, getMentionSuggestions } from '@/lib/userUtils';
+import { getUsersFromFirestore, getMentionSuggestions } from '@/lib/firebaseUserUtils';
 import PageTransition from '@components/workspace/PageTransition';
 import WorkspaceSkeleton from '@components/workspace/WorkspaceSkeleton';
 import { Button } from '@/components/ui/button';
 import { Menu } from 'lucide-react';
 
-const MAX_DOCUMENTS_COUNT = process.env.NEXT_PUBLIC_MAX_DOCUMENTS_COUNT || 8;
+import { getDocumentList, getDocument, handleCreateDocument, handleDeleteDocument, updateDocument } from '@lib/firebaseDocumentUtils';
 
 const WorkspaceLayout = ({ params }) => {
   const [documents, setDocuments] = useState([]);
@@ -29,110 +26,41 @@ const WorkspaceLayout = ({ params }) => {
 
   const toggleSidebar = () => setIsCollapsed(!isCollapsed);
 
-  const getDocumentList = useCallback(() => {
-    const q = query(
-      collection(db, 'documents'),
-      where('workspaceID', '==', String(params?.workspaceid))
-    );
+  useEffect(() => {
+    setLoading(true);
+    let unsubscribe = () => {};
 
-    return onSnapshot(q, snapshot => {
-      const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      setDocuments(data);
-      setLoading(false);
-    });
-  }, [params?.workspaceid]);
-
-  const getDocument = useCallback(async () => {
-    try {
-      const docRef = doc(db, 'documents', params.documentid);
-      return onSnapshot(docRef, (docSnap) => {
-        if (docSnap.exists()) {
-          const docData = docSnap.data();
-          setDocumentInfo(docData);
-          setLoading(false);
-        }
-      });
-    } catch (error) {
-      console.error('Error fetching document:', error);
-      setLoading(false);
+    if (params?.workspaceid) {
+      unsubscribe = getDocumentList(params.workspaceid, setDocuments, setLoading);
     }
-  }, [params.documentid]);
+
+    return () => unsubscribe();
+  }, [params?.workspaceid]);
 
   useEffect(() => {
     setLoading(true);
-    if (params?.workspaceid) {
-      getDocumentList();
-    }
+    let unsubscribe = () => {};
+
     if (params?.documentid) {
-      getDocument();
-    }
-  }, [params, getDocumentList, getDocument]);
-
-  const handleCreateDocument = async () => {
-    if (documents?.length >= MAX_DOCUMENTS_COUNT) {
-      toast('Upgrade required', {
-        description: 'You have reached the maximum number of files. Upgrade your plan to create more documents.',
-        action: {
-          label: 'Upgrade',
-          onClick: () => console.log('Upgrade clicked'),
-        },
-      });
-      return;
+      unsubscribe = getDocument(params.documentid, setDocumentInfo, setLoading);
     }
 
-    setLoading(true);
+    return () => unsubscribe();
+  }, [params?.documentid]);
 
-    try {
-      const documentID = uuidv4();
-      await setDoc(doc(db, 'documents', documentID), {
-        id: documentID,
-        workspaceID: params?.workspaceid,
-        owner: user?.primaryEmailAddress?.emailAddress,
-        name: 'Untitled Document',
-        cover: null,
-        emoji: null,
-        documentOutput: [],
-      });
+  const createDocument = () => handleCreateDocument(documents, params, user, router, setLoading);
 
-      await setDoc(doc(db, 'documentOutput', documentID), {
-        id: documentID,
-        output: [],
-      });
-
-      router.push(`/workspace/${params?.workspaceid}/${documentID}`);
-    } catch (error) {
-      console.error('Error creating document:', error);
-      toast.error('Failed to create document');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleDeleteDocument = async docId => {
-    try {
-      await deleteDoc(doc(db, 'documents', docId));
-      toast.success('Document Deleted!');
-    } catch (error) {
-      console.error('Error deleting document:', error);
-      toast.error('Failed to delete document');
-    }
-  };
-
-  const updateDocument = async (key, value) => {
-    try {
-      const docRef = doc(db, 'documents', params.documentid);
-      await setDoc(docRef, { [key]: value }, { merge: true });
-      setDocumentInfo(prevInfo => ({ ...prevInfo, [key]: value }));
-    } catch (error) {
-      console.error('Error updating document:', error);
-      toast.error('Failed to update document');
+  const deleteDocument = async (docId) => {
+    await handleDeleteDocument(docId);
+    if (docId === params?.documentid) {
+      router.push(`/workspace/${params?.workspaceid}`);
     }
   };
 
   if (loading) {
     return <WorkspaceSkeleton />;
   }
-  
+
   return (
     <LiveblocksProvider
       authEndpoint={`/api/liveblocks-auth?roomId=${params?.documentid || '1'}`}
@@ -149,8 +77,8 @@ const WorkspaceLayout = ({ params }) => {
                   loading={loading}
                   params={params}
                   router={router}
-                  handleCreateDocument={handleCreateDocument}
-                  handleDeleteDocument={handleDeleteDocument}
+                  handleCreateDocument={createDocument}
+                  handleDeleteDocument={deleteDocument}
                   isCollapsed={isCollapsed}
                   toggleSidebar={toggleSidebar}
                 />
@@ -162,7 +90,6 @@ const WorkspaceLayout = ({ params }) => {
                       </Button>
                       <h1 className="text-2xl font-bold">Workspace</h1>
                     </div>
-                    {/* Add any header actions or components here */}
                   </header>
                   <main className="flex-1 flex overflow-hidden">
                     <div className="flex-1 overflow-auto">
@@ -177,10 +104,10 @@ const WorkspaceLayout = ({ params }) => {
                           <Main 
                             params={params}
                             documentInfo={documentInfo}
-                            updateDocument={updateDocument}
+                            updateDocument={(key, value) => updateDocument(params?.documentid, key, value)}
                             documents={documents}
-                            handleCreateDocument={handleCreateDocument}
-                            handleDeleteDocument={handleDeleteDocument}
+                            handleCreateDocument={createDocument}
+                            handleDeleteDocument={deleteDocument}
                             user={user}
                             router={router}
                             toggleSidebar={toggleSidebar}

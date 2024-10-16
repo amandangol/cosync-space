@@ -4,8 +4,8 @@ import Image from 'next/image';
 import { UserButton, OrganizationSwitcher } from '@clerk/nextjs';
 
 const Header = () => (
-  <header className="bg-white shadow-sm">
-    <div className="w-full flex items-center justify-between px-4 sm:px-6 lg:px-8 py-2"> {/* Reduced padding on the Y-axis */}
+  <header className="bg-white border-b border-gray-200">
+    <div className="w-full flex items-center justify-between px-4 sm:px-6 lg:px-8 py-2"> 
       <Link href="/cosyncspace-dashboard" className="flex items-center space-x-2">
         <Image
           src="/images/logo.svg" 
@@ -15,6 +15,7 @@ const Header = () => (
           className="text-indigo-600"
         />
       </Link>
+     
       <div className="flex items-center space-x-4">
         <OrganizationSwitcher
           appearance={{
@@ -49,3 +50,4 @@ const Header = () => (
 );
 
 export default Header;
+

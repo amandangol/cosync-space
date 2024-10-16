@@ -67,6 +67,7 @@ const DocumentContent = ({ params, documentInfo, updateDocument }) => {
     });
   };
 
+
   const initializeEditor = () => {
     if (!editorRef.current) {
       const editor = new EditorJS({
@@ -142,7 +143,7 @@ const DocumentContent = ({ params, documentInfo, updateDocument }) => {
       transition={{ duration: 0.5 }}
       className="flex flex-col h-full overflow-hidden bg-white"
     >
-      <motion.div 
+    <motion.div 
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.2 }}

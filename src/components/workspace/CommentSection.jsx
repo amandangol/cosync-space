@@ -3,7 +3,7 @@ import { useThreads, useUser } from '@liveblocks/react';
 import { Composer, Thread } from '@liveblocks/react-ui';
 import { Button } from '@/components/ui/button';
 import { MessageCircle, X } from 'lucide-react';
-import { getCurrentUser, getMentionSuggestions } from '@/lib/userUtils';
+import { getCurrentUser, getMentionSuggestions } from '@/lib/firebaseUserUtils';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const CommentSection = () => {

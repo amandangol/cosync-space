@@ -15,7 +15,6 @@ const SearchBar = ({ searchTerm, handleSearch, sortBy, setSortBy }) => (
       onChange={(e) => setSortBy(e.target.value)}
       className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
     >
-      <option value="lastUpdated">Last Updated</option>
       <option value="name">Name</option>
       <option value="createdAt">Created At</option>
     </select>
