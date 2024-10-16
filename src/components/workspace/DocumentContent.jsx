@@ -141,16 +141,21 @@ const DocumentContent = ({ params, documentInfo, updateDocument }) => {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5 }}
-      className="flex flex-col h-full overflow-hidden bg-white"
+      className="flex flex-col h-full overflow-hidden bg-gray-50"
     >
-    <motion.div 
+      <motion.div 
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.2 }}
-        className="flex justify-between items-center p-4 border-b bg-gray-50"
+        className="flex justify-between items-center p-4 border-b border-gray-200 bg-white"
       >
         <div className="flex items-center space-x-4">
-          <Button onClick={saveDocument} size="sm" variant="outline" className="bg-white hover:bg-gray-100">
+          <Button 
+            onClick={saveDocument} 
+            size="sm" 
+            variant="outline" 
+            className="bg-blue-50 text-blue-600 hover:bg-blue-100 border-blue-200 transition-colors duration-200"
+          >
             <Save className="w-4 h-4 mr-2" />
             Save
           </Button>
@@ -160,7 +165,7 @@ const DocumentContent = ({ params, documentInfo, updateDocument }) => {
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
-                className="text-sm text-gray-500 flex items-center"
+                className="text-sm text-gray-600 flex items-center"
               >
                 <Clock className="w-4 h-4 mr-1" />
                 Last saved: {new Date(lastSaved).toLocaleString()}
@@ -173,7 +178,7 @@ const DocumentContent = ({ params, documentInfo, updateDocument }) => {
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.3 }}
-        className="flex-grow overflow-auto"
+        className="flex-grow overflow-auto bg-white"
       >
         <div id="editorjs" className="editor-wrapper min-h-full p-8" />
       </motion.div>

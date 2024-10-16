@@ -165,7 +165,7 @@ const Main = ({ params, documentInfo, updateDocument, documents, handleCreateDoc
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className="flex flex-col h-full bg-white"
+      className="flex flex-col h-full bg-gray-50"
     >
       <div className="sticky top-0 z-10 bg-white shadow-sm">
         <motion.div 
@@ -190,7 +190,7 @@ const Main = ({ params, documentInfo, updateDocument, documents, handleCreateDoc
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="flex items-center justify-between px-6 py-2 border-b"
+          className="flex items-center justify-between px-6 py-2 border-b border-gray-200"
         >
           <div className="flex items-center space-x-4">
             <EmojiSelector
@@ -225,18 +225,18 @@ const Main = ({ params, documentInfo, updateDocument, documents, handleCreateDoc
           </div>
           <div className="flex items-center space-x-2">
             <Tooltip content="Share">
-              <Button variant="ghost" size="icon" onClick={handleShare} className="hover:bg-gray-100 rounded-full">
+              <Button variant="ghost" size="icon" onClick={handleShare} className="hover:bg-blue-50 text-blue-600 rounded-full">
                 <Share2 className="h-5 w-5" />
               </Button>
             </Tooltip>
             <Tooltip content="Download">
-              <Button variant="ghost" size="icon" onClick={handleDownload} className="hover:bg-gray-100 rounded-full">
+              <Button variant="ghost" size="icon" onClick={handleDownload} className="hover:bg-blue-50 text-blue-600 rounded-full">
                 <Download className="h-5 w-5" />
               </Button>
             </Tooltip>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="hover:bg-gray-100 rounded-full">
+                <Button variant="ghost" size="icon" className="hover:bg-blue-50 text-blue-600 rounded-full">
                   <ChevronDown className="h-5 w-5" />
                 </Button>
               </DropdownMenuTrigger>
@@ -268,5 +268,6 @@ const Main = ({ params, documentInfo, updateDocument, documents, handleCreateDoc
     </motion.div>
   );
 }
+
 
 export default Main;

@@ -68,11 +68,11 @@ const Sidebar = ({ documents = [], loading, params, handleCreateDocument, handle
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.2 }}
-        className={`flex items-center justify-between border-b border-gray-300 p-4 ${isCollapsed ? 'flex-col' : ''}`}
+        className={`flex items-center justify-between border-b border-gray-200 p-4 ${isCollapsed ? 'flex-col' : ''}`}
       >
-        {!isCollapsed && <h1 className="text-xl font-bold truncate">{workspaceName}</h1>}
+        {!isCollapsed && <h1 className="text-xl font-bold truncate text-gray-800">{workspaceName}</h1>}
         <Tooltip content={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}>
-          <Button onClick={toggleSidebar} variant="ghost" size="sm">
+          <Button onClick={toggleSidebar} variant="ghost" size="sm" className="text-gray-600 hover:bg-gray-200">
             {isCollapsed ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
           </Button>
         </Tooltip>
@@ -91,9 +91,6 @@ const Sidebar = ({ documents = [], loading, params, handleCreateDocument, handle
                 {loading ? <Loader className="h-4 w-4 animate-spin" /> : <FolderPlus size={16} />}
               </Button>
             </Tooltip>
-            <Tooltip content={`${documentCount} document${documentCount !== 1 ? 's' : ''}`}>
-              <div className="text-sm font-medium text-gray-600">{documentCount}</div>
-            </Tooltip>
             {documents.map(doc => (
               <Tooltip key={doc?.id} content={doc.name}>
                 <Button
@@ -108,7 +105,7 @@ const Sidebar = ({ documents = [], loading, params, handleCreateDocument, handle
                 </Button>
               </Tooltip>
             ))}
-          </motion.div>
+         </motion.div>
         ) : (
           <motion.div
             initial={{ opacity: 0 }}
@@ -118,7 +115,7 @@ const Sidebar = ({ documents = [], loading, params, handleCreateDocument, handle
             className="flex flex-col h-full overflow-hidden p-4"
           >
             <div className="relative mb-4">
-              <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-500" size={16} />
+              <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
               <Input
                 type="text"
                 placeholder="Search documents..."
@@ -128,7 +125,7 @@ const Sidebar = ({ documents = [], loading, params, handleCreateDocument, handle
               />
             </div>
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold">My Documents ({documentCount})</h2>
+              <h2 className="text-lg font-semibold text-gray-700">My Documents ({documentCount})</h2>
               <Button onClick={handleCreateDocument} size="sm" className="bg-blue-500 hover:bg-blue-600 text-white">
                 {loading ? <Loader className="h-4 w-4 animate-spin" /> : <FolderPlus size={16} />}
               </Button>
@@ -149,7 +146,7 @@ const Sidebar = ({ documents = [], loading, params, handleCreateDocument, handle
                     </div>
                     <DropdownMenu>
                       <DropdownMenuTrigger>
-                        <MoreVertical size={16} className="text-gray-600" />
+                        <MoreVertical size={16} className="text-gray-500" />
                       </DropdownMenuTrigger>
                       <DropdownMenuContent>
                         <DropdownMenuItem onClick={(e) => {
@@ -181,5 +178,4 @@ const Sidebar = ({ documents = [], loading, params, handleCreateDocument, handle
     </motion.aside>
   );
 };
-
-export default Sidebar;
+export  default Sidebar
