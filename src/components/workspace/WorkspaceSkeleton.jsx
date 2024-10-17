@@ -19,7 +19,16 @@ const WorkspaceSkeleton = () => {
         {/* Header */}
         <div className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-6">
           <div className="h-8 w-1/4 bg-gray-200 rounded"></div>
-          <div className="h-8 w-8 bg-gray-200 rounded-full"></div>
+          <div className="flex items-center space-x-4">
+            {/* Last saved date skeleton */}
+            <div className="h-4 w-32 bg-gray-200 rounded"></div>
+            {/* Action buttons skeleton */}
+            <div className="flex space-x-2">
+              {[...Array(3)].map((_, i) => (
+                <div key={i} className="h-8 w-8 bg-gray-200 rounded-full"></div>
+              ))}
+            </div>
+          </div>
         </div>
 
         {/* Document Content */}

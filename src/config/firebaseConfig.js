@@ -9,13 +9,13 @@ import { getFirestore } from 'firebase/firestore'
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 
 const firebaseConfig = {
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-  authDomain: "colabhub-3c818.firebaseapp.com",
-  projectId: "colabhub-3c818",
-  storageBucket: "colabhub-3c818.appspot.com",
-  messagingSenderId: "653130007083",
-  appId: "1:653130007083:web:9b0defaf2fa15ccdb8a06e",
-  measurementId: "G-PFJSF8D2N1"
+  apiKey: "AIzaSyCb3i0x-FqHat53tj0w8h2dVWP7MzKR-BY",
+  authDomain: "cosync-space.firebaseapp.com",
+  projectId: "cosync-space",
+  storageBucket: "cosync-space.appspot.com",
+  messagingSenderId: "758593059048",
+  appId: "1:758593059048:web:504a22638adc16d778715d",
+  measurementId: "G-HGPP2H2WM5"
 };
 
 // Initialize Firebase

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { useUser } from '@clerk/nextjs';
 import EditorJS from '@editorjs/editorjs';
 import { doc, onSnapshot, updateDoc } from 'firebase/firestore';
@@ -16,59 +16,55 @@ import { Button } from '@/components/ui/button';
 import { Save, Clock } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-
-const DocumentContent = ({ params, documentInfo, updateDocument }) => {
+const DocumentContent = ({ params, updateDocument }) => {
   const [isEditorReady, setIsEditorReady] = useState(false);
-  const [lastSaved, setLastSaved] = useState(null);
+  const [lastModified, setLastModified] = useState(null);
+  const [isSaving, setIsSaving] = useState(false);
   const editorRef = useRef(null);
   const isFetchedRef = useRef(false);
   const { user } = useUser();
 
-  useEffect(() => {
-    if (user && !isEditorReady && params?.documentid) {
-      initializeEditor();
-    }
-  }, [user, isEditorReady, params?.documentid]);
-  useEffect(() => {
-    if (lastSaved) {
-      updateDocument('lastEdited', lastSaved);
-    }
-  }, [lastSaved, updateDocument]);
-
-  const saveDocument = async () => {
+  const saveDocument = useCallback(async () => {
     if (!editorRef.current) return;
+    setIsSaving(true);
     const outputData = await editorRef.current.save();
     const documentRef = doc(db, 'documentOutput', params?.documentid);
     const now = new Date().toISOString();
     await updateDoc(documentRef, {
       output: JSON.stringify(outputData),
-      editedBy: user?.primaryEmailAddress?.emailAddress,
-      lastEdited: now,
+      content: outputData, // Save the entire EditorJS output
+      lastModified: now,
+      modifiedBy: user?.primaryEmailAddress?.emailAddress,
     });
-    setLastSaved(now);
-  };
-
-  const fetchDocumentOutput = () => {
+    updateDocument('lastModified', now);
+    updateDocument('content', outputData); // Update the content in the parent component
+    setIsSaving(false);
+  }, [params?.documentid, user?.primaryEmailAddress?.emailAddress, updateDocument]);
+  
+  const fetchDocumentOutput = useCallback(() => {
     const documentRef = doc(db, 'documentOutput', params?.documentid);
     return onSnapshot(documentRef, (doc) => {
-      const { output, editedBy, lastEdited } = doc.data() || {};
-      if (!output) return;
+      const { output, content, lastModified: lastModifiedFromDB, modifiedBy } = doc.data() || {};
+      if (!output && !content) return;
       try {
-        const parsedOutput = JSON.parse(output);
-        const isNewEdit = editedBy !== user?.primaryEmailAddress?.emailAddress;
+        const parsedOutput = output ? JSON.parse(output) : content;
+        const isNewEdit = modifiedBy !== user?.primaryEmailAddress?.emailAddress;
         if (isNewEdit || !isFetchedRef.current) {
           editorRef.current?.render(parsedOutput);
           isFetchedRef.current = true;
-          setLastSaved(lastEdited);
         }
+        if (lastModifiedFromDB) {
+          setLastModified(lastModifiedFromDB);
+          updateDocument('lastModified', lastModifiedFromDB);
+        }
+        updateDocument('content', parsedOutput); // Update the content in the parent component
       } catch (error) {
         console.error('Error parsing document output:', error);
       }
     });
-  };
+  }, [params?.documentid, user?.primaryEmailAddress?.emailAddress, updateDocument]);
 
-
-  const initializeEditor = () => {
+  const initializeEditor = useCallback(() => {
     if (!editorRef.current) {
       const editor = new EditorJS({
         holder: 'editorjs',
@@ -81,58 +77,32 @@ const DocumentContent = ({ params, documentInfo, updateDocument }) => {
           fetchDocumentOutput();
         },
         tools: {
-          header: {
-            class: Header,
-            config: {
-              placeholder: 'Enter a header',
-              levels: [1, 2, 3, 4],
-              defaultLevel: 3
-            }
-          },
+          header: Header,
           delimiter: Delimiter,
-          paragraph: {
-            class: Paragraph,
-            inlineToolbar: true,
-          },
-          alert: {
-            class: Alert,
-            inlineToolbar: true,
-            shortcut: 'CMD+SHIFT+A',
-            config: {
-              defaultType: 'info',
-              messagePlaceholder: 'Enter alert message',
-            },
-          },
-          table: {
-            class: Table,
-            inlineToolbar: true,
-          },
-          list: {
-            class: List,
-            inlineToolbar: true,
-          },
-          checklist: {
-            class: Checklist,
-            inlineToolbar: true,
-          },
-          image: {
-            class: SimpleImage,
-            config: {
-              placeholder: 'Paste image URL',
-            },
-          },
-          code: {
-            class: CodeTool,
-            config: {
-              placeholder: 'Enter code',
-            },
-          },
+          paragraph: Paragraph,
+          alert: Alert,
+          table: Table,
+          list: List,
+          checklist: Checklist,
+          image: SimpleImage,
+          code: CodeTool,
         },
         autofocus: true,
         placeholder: 'Let\'s write an awesome story!',
       });
       editorRef.current = editor;
     }
+  }, [fetchDocumentOutput, saveDocument]);
+
+  useEffect(() => {
+    if (user && !isEditorReady && params?.documentid) {
+      initializeEditor();
+    }
+  }, [user, isEditorReady, params?.documentid, initializeEditor]);
+
+  const formatDate = (dateString) => {
+    if (!dateString) return 'Never';
+    return new Date(dateString).toLocaleString();
   };
 
   return (
@@ -155,23 +125,25 @@ const DocumentContent = ({ params, documentInfo, updateDocument }) => {
             size="sm" 
             variant="outline" 
             className="bg-blue-50 text-blue-600 hover:bg-blue-100 border-blue-200 transition-colors duration-200"
+            disabled={isSaving}
           >
             <Save className="w-4 h-4 mr-2" />
-            Save
+            {isSaving ? 'Saving...' : 'Save'}
           </Button>
-          <AnimatePresence>
-            {lastSaved && (
+          {/* <AnimatePresence mode="wait">
+            {lastModified && (
               <motion.span 
+                key={lastModified}
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
                 className="text-sm text-gray-600 flex items-center"
               >
                 <Clock className="w-4 h-4 mr-1" />
-                Last saved: {new Date(lastSaved).toLocaleString()}
+                Last modified: {formatDate(lastModified)}
               </motion.span>
             )}
-          </AnimatePresence>
+          </AnimatePresence> */}
         </div>
       </motion.div>
       <motion.div 

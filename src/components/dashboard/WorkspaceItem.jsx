@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { MoreVertical, Trash2, ChevronDown, ChevronUp, Edit } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -50,11 +50,11 @@ const WorkspaceItem = ({
   const renderDropdownMenu = () => (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" className="h-8 w-8">
+        <Button variant="ghost" size="icon" className="h-8 w-8" onClick={(e) => e.stopPropagation()}>
           <MoreVertical className="h-4 w-4" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
+      <DropdownMenuContent align="end" onClick={(e) => e.stopPropagation()}>
         <DropdownMenuItem onClick={() => onRename(workspace)}>
           <Edit className="mr-2 h-4 w-4" />
           <span>Rename</span>
@@ -73,6 +73,20 @@ const WorkspaceItem = ({
     </DropdownMenu>
   );
 
+  const toggleExpand = (e) => {
+    e.stopPropagation();
+    setIsExpanded(!isExpanded);
+  };
+
+  const handleItemClick = () => {
+    router.push(`/workspace/${workspace.id}`);
+  };
+
+  const statsVariants = {
+    hidden: { opacity: 0, height: 0 },
+    visible: { opacity: 1, height: 'auto' },
+  };
+
   return layout === 'grid' ? (
     <motion.div
       initial={{ opacity: 0, scale: 0.9 }}
@@ -80,12 +94,14 @@ const WorkspaceItem = ({
       transition={{ duration: 0.3 }}
       className="group overflow-hidden rounded-lg bg-white shadow-lg transition-all hover:shadow-xl"
     >
-      <ItemContent />
+      <div onClick={handleItemClick}>
+        <ItemContent />
+      </div>
       <div className="flex justify-between items-center px-4 py-2 bg-gray-50">
         <Button
           variant="ghost"
           size="sm"
-          onClick={() => setIsExpanded(!isExpanded)}
+          onClick={toggleExpand}
           className="text-purple-600 hover:text-purple-700"
         >
           {isExpanded ? <ChevronUp className="h-4 w-4 mr-1" /> : <ChevronDown className="h-4 w-4 mr-1" />}
@@ -93,22 +109,32 @@ const WorkspaceItem = ({
         </Button>
         {renderDropdownMenu()}
       </div>
-      {isExpanded && (
-        <WorkspaceStats
-          workspace={workspace}
-          documents={documents || []}
-          lastEdited={documents && documents.length > 0 ? documents[0].lastEdited : 'N/A'}
-        />
-      )}
+      <AnimatePresence>
+        {isExpanded && (
+          <motion.div
+            initial="hidden"
+            animate="visible"
+            exit="hidden"
+            variants={statsVariants}
+            transition={{ duration: 0.3 }}
+          >
+            <WorkspaceStats
+              workspace={workspace}
+              documents={documents || []}
+              lastEdited={documents && documents.length > 0 ? documents[0].lastEdited : 'N/A'}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.div>
-  ) :  (
+  ) : (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
       className="group rounded-lg bg-white shadow-md transition-all hover:shadow-lg"
     >
-      <div className="flex cursor-pointer items-center justify-between p-4" onClick={() => router.push(`/workspace/${workspace.id}`)}>
+      <div className="flex cursor-pointer items-center justify-between p-4" onClick={handleItemClick}>
         <div className="flex items-center space-x-4">
           <div className="relative h-16 w-16 overflow-hidden rounded-lg">
             <Image
@@ -128,10 +154,7 @@ const WorkspaceItem = ({
           <Button
             variant="ghost"
             size="sm"
-            onClick={(e) => {
-              e.stopPropagation();
-              setIsExpanded(!isExpanded);
-            }}
+            onClick={toggleExpand}
             className="text-purple-600 hover:text-purple-700"
           >
             {isExpanded ? <ChevronUp className="h-4 w-4 mr-1" /> : <ChevronDown className="h-4 w-4 mr-1" />}
@@ -140,13 +163,24 @@ const WorkspaceItem = ({
           {renderDropdownMenu()}
         </div>
       </div>
-{isExpanded && (
-  <WorkspaceStats
-    workspace={workspace}
-    documents={documents}
-    lastEdited={documents && documents.length > 0 ? documents[0].lastEdited : 'N/A'}
-    />
-)}
+      <AnimatePresence>
+        {isExpanded && (
+          <motion.div
+            initial="hidden"
+            animate="visible"
+            exit="hidden"
+            variants={statsVariants}
+            transition={{ duration: 0.3 }}
+            className="px-4 pb-4"
+          >
+            <WorkspaceStats
+              workspace={workspace}
+              documents={documents}
+              lastEdited={documents && documents.length > 0 ? documents[0].lastEdited : 'N/A'}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 };

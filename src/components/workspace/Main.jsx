@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
-import { PlusCircle, FileText, Share2, Download, Trash2, Edit, ChevronDown, Bold, Italic, Underline, AlignLeft, AlignCenter, AlignRight, List, ListOrdered } from 'lucide-react';
+import { PlusCircle, FileText, Share2, Download, Edit, ChevronDown, Clock} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import DocumentContent from './DocumentContent';
 import CoverModal from '../CoverModal';
@@ -14,10 +14,16 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { Document, Packer, Paragraph, TextRun } from 'docx';
 
 const Main = ({ params, documentInfo, updateDocument, documents, handleCreateDocument, handleDeleteDocument, user, router }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedName, setEditedName] = useState(documentInfo?.name || "Untitled Document");
+  const [lastModified, setLastModified] = useState(documentInfo?.lastModified || null);
+
+  useEffect(() => {
+    setLastModified(documentInfo?.lastModified || null);
+  }, [documentInfo?.lastModified]);
 
   const handleRename = () => {
     setIsEditing(true);
@@ -58,23 +64,92 @@ const Main = ({ params, documentInfo, updateDocument, documents, handleCreateDoc
     return isNaN(date.getTime()) ? 'Never' : date.toLocaleString();
   };
 
-  const handleDownload = async () => {
-    if (!documentInfo) return;
-    // TODO: Implement .docx conversion logic here
-    // For now, we'll just download the JSON as before
-    const content = JSON.stringify(documentInfo, null, 2);
-    const blob = new Blob([content], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `${documentInfo.name || 'document'}.json`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
+  const convertEditorJSToDocx = (content) => {
+    if (!content || !content.blocks) {
+      throw new Error('Invalid document content structure');
+    }
+
+    const doc = new Document({
+      sections: [{
+        properties: {},
+        children: content.blocks.map(block => {
+          switch (block.type) {
+            case 'header':
+              return new Paragraph({
+                text: block.data.text,
+                heading: `Heading${block.data.level}`
+              });
+            case 'paragraph':
+              return new Paragraph({
+                children: [new TextRun(block.data.text)]
+              });
+            case 'list':
+              return new Paragraph({
+                text: block.data.items.join('\n'),
+                bullet: {
+                  level: 0
+                }
+              });
+            // Add more cases for other block types as needed
+            default:
+              return new Paragraph({
+                text: JSON.stringify(block.data)
+              });
+          }
+        })
+      }]
+    });
+    return doc;
   };
 
+  const handleDownload = async () => {
+    if (!documentInfo) {
+      toast.error('No document information available');
+      return;
+    }
+    
+    try {
+      console.log('Document Info:', JSON.stringify(documentInfo, null, 2));
+
+      let content = documentInfo.content;
+
+      if (!content) {
+        throw new Error('No document content found');
+      }
+
+      const docx = convertEditorJSToDocx(content);
+      
+      // Generate blob from docx
+      const blob = await Packer.toBlob(docx);
+      
+      // Create download link
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `${documentInfo.name || 'document'}.docx`;
+      
+      // Trigger download
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      // Clean up
+      URL.revokeObjectURL(url);
+      
+      toast.success('Document downloaded successfully!');
+    } catch (error) {
+      console.error('Error downloading document:', error);
+      toast.error(`Failed to download document: ${error.message}`);
+    }
+  };
+
+  const handleUpdateDocument = (field, value) => {
+    updateDocument(field, value);
+    if (field === 'lastModified') {
+      setLastModified(value);
+    }
+  };
+  
   if (!params?.documentid) {
     return (
       <motion.div 
@@ -146,8 +221,9 @@ const Main = ({ params, documentInfo, updateDocument, documents, handleCreateDoc
                       <span className="font-medium text-lg text-gray-800">
                         {doc.name || "Untitled Document"}
                       </span>
-                      <span className="text-sm text-gray-500 mt-2">
-                      Last edited: {formatDate(doc.lastEdited)}
+                      <span className="text-sm text-gray-500 mt-2 flex items-center">
+                        <Clock className="w-4 h-4 mr-1" />
+                        Last edited: {formatDate(doc.lastModified)}
                       </span>
                     </Button>
                   </motion.div>
@@ -224,6 +300,20 @@ const Main = ({ params, documentInfo, updateDocument, documents, handleCreateDoc
             </AnimatePresence>
           </div>
           <div className="flex items-center space-x-2">
+            <AnimatePresence mode="wait">
+              {lastModified && (
+                <motion.span 
+                  key={lastModified}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  className="text-sm text-gray-600 flex items-center mr-4"
+                >
+                  <Clock className="w-4 h-4 mr-1" />
+                  Last modified: {formatDate(lastModified)}
+                </motion.span>
+              )}
+            </AnimatePresence>
             <Tooltip content="Share">
               <Button variant="ghost" size="icon" onClick={handleShare} className="hover:bg-blue-50 text-blue-600 rounded-full">
                 <Share2 className="h-5 w-5" />
@@ -261,13 +351,12 @@ const Main = ({ params, documentInfo, updateDocument, documents, handleCreateDoc
             params={params}
             documentInfo={documentInfo}
             user={user}
-            updateDocument={updateDocument}
+            updateDocument={handleUpdateDocument}
           />
         </div>
       </motion.div>
     </motion.div>
   );
 }
-
 
 export default Main;

@@ -41,15 +41,17 @@ const CommentSection = () => {
           thread.comments.map(comment => comment.userId)
         );
         const uniqueUserIds = [...new Set(userIds)];
-        const fetchedUsers = await getUsersFromFirestore(uniqueUserIds);
-        const usersObject = fetchedUsers.reduce((acc, user) => {
-          acc[user.id] = user;
-          return acc;
-        }, {});
-        setUsers(usersObject);
+        if (uniqueUserIds.length > 0) {
+          const fetchedUsers = await getUsersFromFirestore(uniqueUserIds);
+          const usersObject = fetchedUsers.reduce((acc, user) => {
+            acc[user.id] = user;
+            return acc;
+          }, {});
+          setUsers(usersObject);
+        }
       }
     };
-
+  
     fetchUsers();
   }, [threads]);
 

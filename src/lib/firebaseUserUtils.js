@@ -3,6 +3,13 @@ import { db } from '@/config/firebaseConfig';
 
 export const getUsersFromFirestore = async (userIds) => {
   console.log('getUsersFromFirestore called with IDs:', userIds);
+  
+  // Check if userIds is empty or undefined
+  if (!userIds || userIds.length === 0) {
+    console.log('No user IDs provided. Returning empty array.');
+    return [];
+  }
+
   const q = query(collection(db, 'users'), where('email', 'in', userIds));
   const querySnapshot = await getDocs(q);
   const users = querySnapshot.docs.map(doc => {

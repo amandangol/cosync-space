@@ -37,7 +37,7 @@ const SetupWorkspace = () => {
       await setDoc(doc(db, 'workspaces', workspaceID), {
         id: workspaceID,
         name: workspaceName,
-        cover: image,  // This will now be the updated image
+        cover: image, 
         emoji: emojiIcon,
         owner: user?.primaryEmailAddress?.emailAddress,
         organization: orgId || user?.primaryEmailAddress?.emailAddress,
@@ -116,7 +116,7 @@ const SetupWorkspace = () => {
             <Button onClick={createWorkspace} disabled={!workspaceName.trim() || loading} className={`w-full md:w-auto ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}>
               {loading ? 'Creating...' : 'Create Workspace'}
             </Button>
-            <Button variant="outline" onClick={() => router.push('/syncspace-dashboard')} className="w-full md:w-auto">
+            <Button variant="outline" onClick={() => router.push('/cosyncspace-dashboard')} className="w-full md:w-auto">
               Cancel
             </Button>
           </div>
