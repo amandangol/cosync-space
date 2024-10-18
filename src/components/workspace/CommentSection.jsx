@@ -1,72 +1,73 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useThreads, useUser } from '@liveblocks/react';
 import { Composer, Thread } from '@liveblocks/react-ui';
 import { Button } from '@/components/ui/button';
 import { MessageCircle, X } from 'lucide-react';
-import { getCurrentUser, getMentionSuggestions, getUsersFromFirestore } from '@/lib/firebaseUserUtils';
+import { getMentionSuggestions, getUsersFromFirestore } from '@/lib/firebaseUserUtils';
 import { motion, AnimatePresence } from 'framer-motion';
-import CustomThread from './CustomThread'; // Import the CustomThread component
 
-const CommentSection = () => {
+const CommentSection = ({ currentUser }) => {
   const [openComment, setOpenComment] = useState(false);
   const { threads } = useThreads();
   const { user } = useUser();
-  const [currentUser, setCurrentUser] = useState(null);
   const [users, setUsers] = useState({});
 
-  useEffect(() => {
-    const fetchCurrentUser = async () => {
-      if (user) {
-        try {
-          const userData = await getCurrentUser(user.id);
-          if (userData) {
-            setCurrentUser({
-              ...userData,
-              name: userData.name || userData.email.split('@')[0],
-            });
-          }
-        } catch (error) {
-          console.error('Error fetching current user:', error);
-        }
+  const fetchUsers = useCallback(async (userIds) => {
+    if (userIds.length > 0) {
+      try {
+        console.log('Fetching users for IDs:', userIds);
+        const fetchedUsers = await getUsersFromFirestore(userIds);
+        console.log('Fetched users:', fetchedUsers);
+        const newUsersObject = fetchedUsers.reduce((acc, user) => {
+          acc[user.id] = user;
+          return acc;
+        }, {});
+        setUsers(prevUsers => {
+          const updatedUsers = {...prevUsers, ...newUsersObject};
+          console.log('Updated users state:', updatedUsers);
+          return updatedUsers;
+        });
+      } catch (error) {
+        console.error('Error fetching users:', error);
       }
-    };
-
-    fetchCurrentUser();
-  }, [user]);
+    }
+  }, []);
 
   useEffect(() => {
-    const fetchUsers = async () => {
-      if (threads) {
-        const userIds = threads.flatMap(thread => 
-          thread.comments.map(comment => comment.userId)
-        );
-        const uniqueUserIds = [...new Set(userIds)];
-        if (uniqueUserIds.length > 0) {
-          const fetchedUsers = await getUsersFromFirestore(uniqueUserIds);
-          const usersObject = fetchedUsers.reduce((acc, user) => {
-            acc[user.id] = user;
-            return acc;
-          }, {});
-          setUsers(usersObject);
-        }
+    if (threads) {
+      console.log('Threads updated:', threads);
+      const userIds = threads.flatMap(thread => 
+        thread.comments.map(comment => comment.userId)
+      );
+      console.log('User IDs from threads:', userIds);
+      const uniqueUserIds = [...new Set(userIds)];
+      const missingUserIds = uniqueUserIds.filter(id => !users[id]);
+      if (missingUserIds.length > 0) {
+        console.log('Fetching missing user IDs:', missingUserIds);
+        fetchUsers(missingUserIds);
       }
-    };
-  
-    fetchUsers();
-  }, [threads]);
+    }
+  }, [threads, users, fetchUsers]);
 
   const toggleComment = () => setOpenComment(prev => !prev);
 
+  const renderUsername = (userId) => {
+    console.log('Rendering username for userId:', userId);
+    console.log('Current users state:', users);
+    const user = users[userId];
+    return user ? user.name : userId.split('@')[0];
+  };
+
   return (
     <>
-      <div className="fixed top-8 right-6 z-10"> 
+      <div className="fixed top-8 right-6 z-10">
         <motion.div
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
         >
           <Button
             onClick={toggleComment}
-            className="rounded-full bg-indigo-600 p-3 text-white shadow-lg hover:bg-indigo-700 transition-colors duration-200"
+            className="rounded-full bg-blue-600 p-3 text-white shadow-lg hover:bg-blue-700 transition-colors duration-200"
           >
             <AnimatePresence mode="wait" initial={false}>
               <motion.div
@@ -89,7 +90,7 @@ const CommentSection = () => {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 300 }}
             transition={{ duration: 0.3 }}
-            className="fixed top-0 right-0 h-full w-[350px] bg-gray-50 shadow-xl flex flex-col overflow-hidden border-l border-indigo-200"
+            className="fixed top-0 right-0 h-full w-[350px] bg-gray-900 shadow-xl flex flex-col overflow-hidden border-l border-gray-700"
           >
             <motion.div
               initial={{ opacity: 0 }}
@@ -101,7 +102,20 @@ const CommentSection = () => {
                 <Thread 
                   key={thread.id} 
                   thread={thread}
-                  users={users}
+                  renderUser={(userId) => {
+                    console.log('Rendering user for userId:', userId);
+                    const user = users[userId];
+                    return (
+                      <div className="flex items-center">
+                        <img 
+                          src={user?.avatar || '/default-avatar.png'} 
+                          alt={renderUsername(userId)} 
+                          className="w-8 h-8 rounded-full mr-2"
+                        />
+                        <span className="text-gray-300">{renderUsername(userId)}</span>
+                      </div>
+                    );
+                  }}
                 />
               ))}
             </motion.div>
@@ -109,7 +123,7 @@ const CommentSection = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="p-4 bg-white border-t border-indigo-200"
+              className="p-4 bg-gray-800 border-t border-gray-700"
             >
               <Composer
                 mentionSuggestions={getMentionSuggestions}
@@ -125,7 +139,7 @@ const CommentSection = () => {
                     <Button 
                       type="submit" 
                       disabled={!canSubmit}
-                      className="mt-2 w-full rounded bg-indigo-600 px-4 py-2 text-white hover:bg-indigo-700 transition-colors duration-200 disabled:bg-indigo-400"
+                      className="mt-2 w-full rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 transition-colors duration-200 disabled:bg-blue-400"
                     >
                       {isSubmitting ? 'Sending...' : 'Reply'}
                     </Button>

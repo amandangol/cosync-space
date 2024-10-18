@@ -4,15 +4,16 @@ import { db } from '@/config/firebaseConfig';
 export const getUsersFromFirestore = async (userIds) => {
   console.log('getUsersFromFirestore called with IDs:', userIds);
   
-  // Check if userIds is empty or undefined
   if (!userIds || userIds.length === 0) {
     console.log('No user IDs provided. Returning empty array.');
     return [];
   }
 
-  const q = query(collection(db, 'users'), where('email', 'in', userIds));
-  const querySnapshot = await getDocs(q);
-  const users = querySnapshot.docs.map(doc => {
+  const usersQuery = query(collection(db, 'LoopUsers'), where('email', 'in', userIds));
+
+  const snapshot = await getDocs(usersQuery);
+
+  const users = snapshot.docs.map(doc => {
     const userData = doc.data();
     console.log('Raw user data from Firestore:', userData);
     return {
@@ -21,13 +22,14 @@ export const getUsersFromFirestore = async (userIds) => {
       avatar: userData.avatar || null,
     };
   });
+
   console.log('Processed user data:', users);
   return users;
 };
 
 export const getMentionSuggestions = async (text) => {
   console.log('getMentionSuggestions called with text:', text);
-  const q = query(collection(db, 'users'), where('email', '!=', null));
+  const q = query(collection(db, 'LoopUsers'), where('email', '!=', null));
   const querySnapshot = await getDocs(q);
   let userList = querySnapshot.docs.map(doc => {
     const userData = doc.data();
@@ -55,7 +57,7 @@ export const getCurrentUser = async (userEmail) => {
     return null;
   }
   
-  const q = query(collection(db, 'users'), where('email', '==', userEmail));
+  const q = query(collection(db, 'LoopUsers'), where('email', '==', userEmail));
   const querySnapshot = await getDocs(q);
   
   if (querySnapshot.empty) {

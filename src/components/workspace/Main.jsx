@@ -25,6 +25,7 @@ const Main = ({ params, documentInfo, updateDocument, documents, handleCreateDoc
     setLastModified(documentInfo?.lastModified || null);
   }, [documentInfo?.lastModified]);
 
+
   const handleRename = () => {
     setIsEditing(true);
     setEditedName(documentInfo?.name || "Untitled Document");
@@ -156,14 +157,14 @@ const Main = ({ params, documentInfo, updateDocument, documents, handleCreateDoc
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
-        className="flex flex-col h-full items-center justify-center p-6 bg-gray-50"
+        className="flex flex-col h-full items-center justify-center p-6 bg-gray-800"
       >
         <div className="text-center mb-8">
           <motion.h2 
             initial={{ y: -20 }}
             animate={{ y: 0 }}
             transition={{ delay: 0.2 }}
-            className="text-3xl font-bold mb-2 text-gray-800"
+            className="text-3xl font-bold mb-2 text-white"
           >
             Welcome to Your Workspace
           </motion.h2>
@@ -171,7 +172,7 @@ const Main = ({ params, documentInfo, updateDocument, documents, handleCreateDoc
             initial={{ y: -20 }}
             animate={{ y: 0 }}
             transition={{ delay: 0.3 }}
-            className="text-xl text-gray-600"
+            className="text-xl text-gray-300"
           >
             Get started by creating a new document or selecting an existing one.
           </motion.p>
@@ -196,10 +197,10 @@ const Main = ({ params, documentInfo, updateDocument, documents, handleCreateDoc
               transition={{ delay: 0.5 }}
               className="flex flex-col items-center mt-8 w-full max-w-5xl"
             >
-              <h3 className="text-2xl font-semibold mb-4 text-gray-700">
+              <h3 className="text-2xl font-semibold mb-4 text-gray-200">
                 Recent Documents:
               </h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
+              <div className=" grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
                 {documents.slice(0, 6).map((doc, index) => (
                   <motion.div
                     key={doc.id}
@@ -209,7 +210,7 @@ const Main = ({ params, documentInfo, updateDocument, documents, handleCreateDoc
                   >
                     <Button
                       variant="outline"
-                      className="w-full flex flex-col items-start justify-start p-6 h-auto hover:bg-gray-50 hover:shadow-lg transition-all duration-300 rounded-lg border border-gray-200"
+                      className="bg-gray-900 w-full flex flex-col items-start justify-start p-6 h-auto hover:bg-gray-700 hover:shadow-lg transition-all duration-300 rounded-lg border border-gray-600 text-left"
                       onClick={() =>
                         router.push(`/workspace/${params?.workspaceid}/${doc?.id}`)
                       }
@@ -218,10 +219,10 @@ const Main = ({ params, documentInfo, updateDocument, documents, handleCreateDoc
                         <span className="text-3xl">{doc.emoji || "📄"}</span>
                         <FileText className="text-gray-400" size={20} />
                       </div>
-                      <span className="font-medium text-lg text-gray-800">
+                      <span className="font-medium text-lg text-gray-200">
                         {doc.name || "Untitled Document"}
                       </span>
-                      <span className="text-sm text-gray-500 mt-2 flex items-center">
+                      <span className="text-sm text-gray-400 mt-2 flex items-center">
                         <Clock className="w-4 h-4 mr-1" />
                         Last edited: {formatDate(doc.lastModified)}
                       </span>
@@ -235,15 +236,14 @@ const Main = ({ params, documentInfo, updateDocument, documents, handleCreateDoc
       </motion.div>
     );
   }
-  
   return (
     <motion.div 
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className="flex flex-col h-full bg-gray-50"
+      className="flex flex-col h-full bg-gray-800"
     >
-      <div className="sticky top-0 z-10 bg-white shadow-sm">
+      <div className="sticky top-0 z-10 bg-gray-900 shadow-sm">
         <motion.div 
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -257,7 +257,7 @@ const Main = ({ params, documentInfo, updateDocument, documents, handleCreateDoc
             objectFit="cover"
           />
           <CoverModal setNewCover={cover => updateDocument('cover', cover)}>
-            <Button variant="ghost" className="absolute bottom-2 right-2 bg-white/80 hover:bg-white rounded-md">
+            <Button variant="ghost" className="absolute bottom-2 right-2 bg-gray-800/80 hover:bg-gray-700 text-white rounded-md">
               Change Cover
             </Button>
           </CoverModal>
@@ -266,7 +266,7 @@ const Main = ({ params, documentInfo, updateDocument, documents, handleCreateDoc
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="flex items-center justify-between px-6 py-2 border-b border-gray-200"
+          className="flex items-center justify-between px-6 py-2 border-b border-gray-700"
         >
           <div className="flex items-center space-x-4">
             <EmojiSelector
@@ -285,13 +285,13 @@ const Main = ({ params, documentInfo, updateDocument, documents, handleCreateDoc
                   onBlur={handleNameSubmit}
                   onKeyDown={handleNameKeyDown}
                   autoFocus
-                  className="text-2xl font-bold outline-none bg-gray-100 px-2 py-1 rounded-md"
+                  className="text-2xl font-bold outline-none bg-gray-700 text-white px-2 py-1 rounded-md"
                 />
               ) : (
                 <motion.h1
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  className="text-2xl font-bold cursor-pointer hover:bg-gray-100 px-2 py-1 rounded-md transition-colors duration-200"
+                  className="text-2xl font-bold cursor-pointer hover:bg-gray-700 text-white px-2 py-1 rounded-md transition-colors duration-200"
                   onClick={handleRename}
                 >
                   {documentInfo?.name || "Untitled Document"}
@@ -307,7 +307,7 @@ const Main = ({ params, documentInfo, updateDocument, documents, handleCreateDoc
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -20 }}
-                  className="text-sm text-gray-600 flex items-center mr-4"
+                  className="text-sm text-gray-300 flex items-center mr-4"
                 >
                   <Clock className="w-4 h-4 mr-1" />
                   Last modified: {formatDate(lastModified)}
@@ -315,14 +315,14 @@ const Main = ({ params, documentInfo, updateDocument, documents, handleCreateDoc
               )}
             </AnimatePresence>
             <Tooltip content="Share">
-              <Button variant="ghost" size="icon" onClick={handleShare} className="hover:bg-blue-50 text-blue-600 rounded-full">
+              <Button variant="ghost" size="icon" onClick={handleShare} className="hover:bg-gray-700 text-blue-400 rounded-full">
                 <Share2 className="h-5 w-5" />
               </Button>
             </Tooltip>
             <Tooltip content="Download">
-              <Button variant="ghost" size="icon" onClick={handleDownload} className="hover:bg-blue-50 text-blue-600 rounded-full">
-                <Download className="h-5 w-5" />
-              </Button>
+            <Button variant="ghost" size="icon" onClick={handleDownload} className="hover:bg-gray-700 text-blue-400 rounded-full">
+              <Download className="h-5 w-5" />
+            </Button>
             </Tooltip>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -346,7 +346,7 @@ const Main = ({ params, documentInfo, updateDocument, documents, handleCreateDoc
         transition={{ delay: 0.4 }}
         className="flex-grow overflow-auto"
       >
-        <div className="max-w-4xl mx-auto my-8 p-8 bg-white shadow-lg rounded-lg">
+        <div className="max-w-4xl mx-auto my-8 p-8 bg-gray-800 shadow-lg rounded-lg">
           <DocumentContent
             params={params}
             documentInfo={documentInfo}

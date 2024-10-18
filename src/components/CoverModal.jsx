@@ -1,11 +1,8 @@
-'use client'
-
-import { useState } from 'react'
-import Image from 'next/image'
-import ImageCover from '@/assets/ImageCover'
-import { DialogClose } from '@radix-ui/react-dialog'
-
-import { Button } from '@/components/ui/button'
+import { useState } from 'react';
+import Image from 'next/image';
+import ImageCover from '@/assets/ImageCover';
+import { DialogClose } from '@radix-ui/react-dialog';
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -14,103 +11,89 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog'
+} from '@/components/ui/dialog';
 
 function CoverModal({ children, setNewCover }) {
-  const [selectedCover, setSelectedCover] = useState(null)
-  const [customImage, setCustomImage] = useState(null)
+  const [selectedCover, setSelectedCover] = useState(null);
+  const [customImage, setCustomImage] = useState(null);
 
-  const handleFileChange = event => {
-    const file = event.target.files[0]
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
     if (file) {
-      const reader = new FileReader()
+      const reader = new FileReader();
       reader.onloadend = () => {
-        setCustomImage(reader.result)
-        setSelectedCover(reader.result)
-      }
-      reader.readAsDataURL(file)
+        setCustomImage(reader.result);
+        setSelectedCover(reader.result);
+      };
+      reader.readAsDataURL(file);
     }
-  }
+  };
 
-  const handleSelectCover = coverUrl => {
-    setSelectedCover(coverUrl)
-  }
+  const handleSelectCover = (coverUrl) => {
+    setSelectedCover(coverUrl);
+  };
 
   return (
     <Dialog>
-      <DialogTrigger className="w-full">{children}</DialogTrigger>
-      <DialogContent>
+      <DialogTrigger asChild>{children}</DialogTrigger>
+      <DialogContent className="bg-gray-800 text-white border-gray-700">
         <DialogHeader>
-          <DialogTitle>Update Cover</DialogTitle>
-          <DialogDescription>
-            <div className="mt-3 grid grid-cols-2 gap-5 md:grid-cols-3 lg:grid-cols-4">
-              {ImageCover.map((cover, index) => (
-                <div
-                  key={index}
-                  onClick={() => handleSelectCover(cover?.imageUrl)}
-                  className={`${
-                    selectedCover === cover?.imageUrl &&
-                    'border-2 border-primary'
-                  } cursor-pointer rounded-md p-1`}
-                >
-                  <Image
-                    src={cover?.imageUrl}
-                    width={200}
-                    height={140}
-                    className="h-[70px] w-full rounded-md object-cover"
-                  />
-                </div>
-              ))}
-              {customImage && (
-                <div
-                  onClick={() => handleSelectCover(customImage)}
-                  className={`${
-                    selectedCover === customImage && 'border-2 border-primary'
-                  } cursor-pointer rounded-md p-1`}
-                >
-                  <Image
-                    src={customImage}
-                    width={200}
-                    height={140}
-                    className="h-[70px] w-full rounded-md object-cover"
-                  />
-                </div>
-              )}
-            </div>
-            <div className="mt-4">
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleFileChange}
-                className="hidden"
-                id="customFileUpload"
-              />
-
-              <label
-                htmlFor="customFileUpload"
-                className="mt-1 inline-block cursor-pointer rounded-md bg-primary/10 px-4 py-2 text-sm font-semibold text-primary hover:bg-primary/20"
-              >
-                Upload Custom Cover
-              </label>
-            </div>
-          </DialogDescription>
+          <DialogTitle className="text-2xl font-bold">Update Cover</DialogTitle>
         </DialogHeader>
+        <div className="grid grid-cols-3 gap-4">
+          {ImageCover.map((cover, index) => (
+            <div
+              key={index}
+              onClick={() => handleSelectCover(cover?.imageUrl)}
+              className={`${
+                selectedCover === cover?.imageUrl && 'border-2 border-blue-600'
+              } cursor-pointer rounded-md p-1 bg-gray-700`}
+            >
+              <Image src={cover?.imageUrl} alt="cover" width={100} height={100} className="rounded-md" />
+            </div>
+          ))}
+          {customImage && (
+            <div
+              onClick={() => handleSelectCover(customImage)}
+              className={`${
+                selectedCover === customImage && 'border-2 border-blue-600'
+              } cursor-pointer rounded-md p-1 bg-gray-700`}
+            >
+              <Image src={customImage} alt="custom cover" width={100} height={100} className="rounded-md" />
+            </div>
+          )}
+        </div>
+        <div className="mt-4">
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleFileChange}
+            className="hidden"
+            id="cover-upload"
+          />
+          <label
+            htmlFor="cover-upload"
+            className="cursor-pointer bg-gray-700 text-white hover:bg-gray-600 px-4 py-2 rounded-md inline-block"
+          >
+            Upload Custom Cover
+          </label>
+        </div>
         <DialogFooter>
           <DialogClose asChild>
-            <Button type="button" variant="secondary">
+            <Button variant="outline" className="bg-gray-700 text-white hover:bg-gray-600 border-gray-600">
               Close
             </Button>
           </DialogClose>
-          <DialogClose asChild>
-          <Button type="button" onClick={() => setNewCover(selectedCover)}>
-  Update
-</Button>
-
-          </DialogClose>
+          <Button
+            className="bg-blue-600 text-white hover:bg-blue-700"
+            onClick={() => setNewCover(selectedCover)}
+          >
+            Update
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  )
+  );
 }
 
-export default CoverModal
+export default CoverModal;

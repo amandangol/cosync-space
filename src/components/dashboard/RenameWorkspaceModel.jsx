@@ -26,7 +26,7 @@ const RenameWorkspaceModal = ({ isOpen, setIsOpen, workspace, onRename }) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogContent>
+      <DialogContent className="bg-gray-800 text-white">
         <DialogHeader>
           <DialogTitle>Rename Workspace</DialogTitle>
         </DialogHeader>
@@ -35,18 +35,17 @@ const RenameWorkspaceModal = ({ isOpen, setIsOpen, workspace, onRename }) => {
             value={newName}
             onChange={(e) => setNewName(e.target.value)}
             placeholder="Enter new workspace name"
-            className="mb-4"
+            className="mb-4 bg-gray-700 text-white border-gray-600"
           />
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => setIsOpen(false)}>
+            <Button type="button" variant="outline" onClick={() => setIsOpen(false)} className="bg-black-600 text-white border-gray-600 hover:bg-gray-700">
               Cancel
             </Button>
-            <Button type="submit">Rename</Button>
+            <Button type="submit" className="bg-indigo-600 text-white hover:bg-indigo-700">Rename</Button>
           </DialogFooter>
         </form>
       </DialogContent>
     </Dialog>
   );
 };
-
 export default RenameWorkspaceModal;

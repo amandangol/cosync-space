@@ -6,39 +6,23 @@ import {
   LiveblocksProvider,
   RoomProvider,
 } from '@liveblocks/react/suspense'
-import { collection, getDocs, query, where } from 'firebase/firestore'
-
-import { db } from '@config/firebaseConfig'
-
-const getUsersFromFirestore = async userIds => {
-  const q = query(collection(db, 'users'), where('email', 'in', userIds))
-  const querySnapshot = await getDocs(q)
-  return querySnapshot.docs.map(doc => doc.data())
-}
-
-const getMentionSuggestions = async text => {
-  const q = query(collection(db, 'users'), where('email', '!=', null))
-  const querySnapshot = await getDocs(q)
-  let userList = querySnapshot.docs.map(doc => doc.data())
-
-  if (text) {
-    userList = userList.filter(user =>
-      user.name.toLowerCase().includes(text.toLowerCase()),
-    )
-  }
-
-  return userList.map(user => user.email)
-}
+import { getUsersFromFirestore, getMentionSuggestions } from '@/lib/firebaseUserUtils'
 
 export function Room({ children, params }) {
   const roomId = params?.documentid || '1'
 
   const resolveUsers = async ({ userIds }) => {
-    return await getUsersFromFirestore(userIds)
+    console.log('Resolving users for IDs:', userIds);
+    const users = await getUsersFromFirestore(userIds);
+    console.log('Resolved users:', users);
+    return users;
   }
 
   const resolveMentionSuggestions = async ({ text }) => {
-    return await getMentionSuggestions(text)
+    console.log('Resolving mention suggestions for text:', text);
+    const suggestions = await getMentionSuggestions(text);
+    console.log('Resolved mention suggestions:', suggestions);
+    return suggestions;
   }
 
   return (
@@ -49,7 +33,7 @@ export function Room({ children, params }) {
     >
       <RoomProvider id={roomId}>
         <ClientSideSuspense fallback={<Loader />}>
-          {children}
+          {() => children}
         </ClientSideSuspense>
       </RoomProvider>
     </LiveblocksProvider>

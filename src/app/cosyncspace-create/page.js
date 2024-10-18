@@ -32,6 +32,7 @@ const SetupWorkspace = () => {
     setLoading(true);
     setError(null);
     const workspaceID = Date.now().toString();
+    const docId = uuidv4();
 
     try {
       await setDoc(doc(db, 'workspaces', workspaceID), {
@@ -74,14 +75,14 @@ const SetupWorkspace = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white flex flex-col">
       <Header />
       <main className="container mx-auto px-6 py-20 md:px-20 lg:px-36 xl:px-48 flex-grow">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="rounded-lg bg-white shadow-lg p-8"
+          className="rounded-lg bg-gray-800 shadow-lg p-8"
         >
           <CoverModal setNewCover={handleImageChange}>
             <div className="relative mb-6 cursor-pointer">
@@ -91,10 +92,10 @@ const SetupWorkspace = () => {
               </p>
             </div>
           </CoverModal>
-          <h2 className="text-3xl font-extrabold text-gray-900 mb-4">
+          <h2 className="text-3xl font-extrabold text-white mb-4">
             Create a New Workspace
           </h2>
-          <p className="text-gray-700 text-base mb-6">
+          <p className="text-gray-300 text-base mb-6">
             Organize your projects and collaborate with your team. The workspace
             name and other details can be modified later if needed.
           </p>
@@ -104,19 +105,27 @@ const SetupWorkspace = () => {
               placeholder="Workspace Name"
               value={workspaceName}
               onChange={e => setWorkspaceName(e.target.value)}
-              className="flex-grow border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+              className="flex-grow bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:ring-blue-500 focus:border-blue-500"
             />
           </div>
           {error && (
-            <div className="mt-4 p-3 rounded-lg bg-red-50 border border-red-400 text-red-700">
+            <div className="mt-4 p-3 rounded-lg bg-red-900 border border-red-700 text-red-100">
               {error}
             </div>
           )}
           <div className="mt-6 flex justify-end gap-4">
-            <Button onClick={createWorkspace} disabled={!workspaceName.trim() || loading} className={`w-full md:w-auto ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}>
+            <Button 
+              onClick={createWorkspace} 
+              disabled={!workspaceName.trim() || loading} 
+              className={`w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+            >
               {loading ? 'Creating...' : 'Create Workspace'}
             </Button>
-            <Button variant="outline" onClick={() => router.push('/cosyncspace-dashboard')} className="w-full md:w-auto">
+            <Button 
+              variant="outline" 
+              onClick={() => router.push('/cosyncspace-dashboard')} 
+              className="w-full md:w-auto bg-transparent border border-gray-600 text-gray-300 hover:bg-gray-700"
+            >
               Cancel
             </Button>
           </div>

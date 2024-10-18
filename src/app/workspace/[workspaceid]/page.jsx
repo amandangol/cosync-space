@@ -19,8 +19,7 @@ export default function WorkspacePage({ params }) {
 
   return (
     <Suspense fallback={<div>Loading...</div>}>
-            <Header />
-
+      <Header />
       <WorkspaceLayout params={params} />
     </Suspense>
   )

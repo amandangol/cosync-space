@@ -39,10 +39,10 @@ const WorkspaceItem = ({
       </div>
       <div className="p-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-xl font-semibold text-gray-900">{workspace.name}</h2>
+          <h2 className="text-xl font-semibold text-white">{workspace.name}</h2>
           <span className="text-2xl">{workspace.emoji}</span>
         </div>
-        <p className="mt-2 text-sm text-gray-500 line-clamp-2">{workspace.description}</p>
+        <p className="mt-2 text-sm text-gray-300 line-clamp-2">{workspace.description}</p>
       </div>
     </>
   );
@@ -50,12 +50,12 @@ const WorkspaceItem = ({
   const renderDropdownMenu = () => (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" className="h-8 w-8" onClick={(e) => e.stopPropagation()}>
+        <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-300 hover:text-white hover:bg-white-300" onClick={(e) => e.stopPropagation()}>
           <MoreVertical className="h-4 w-4" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" onClick={(e) => e.stopPropagation()}>
-        <DropdownMenuItem onClick={() => onRename(workspace)}>
+      <DropdownMenuContent align="end" onClick={(e) => e.stopPropagation()} className="bg-gray-800 text-white">
+        <DropdownMenuItem onClick={() => onRename(workspace)} className="hover:bg-gray-700">
           <Edit className="mr-2 h-4 w-4" />
           <span>Rename</span>
         </DropdownMenuItem>
@@ -64,7 +64,7 @@ const WorkspaceItem = ({
             setWorkspaceToDelete(workspace);
             setIsDeleteModalOpen(true);
           }}
-          className="text-red-600"
+          className="text-red-400 hover:bg-gray-700"
         >
           <Trash2 className="mr-2 h-4 w-4" />
           <span>Delete</span>
@@ -92,17 +92,17 @@ const WorkspaceItem = ({
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.3 }}
-      className="group overflow-hidden rounded-lg bg-white shadow-lg transition-all hover:shadow-xl"
+      className="group overflow-hidden rounded-lg bg-gray-800 shadow-lg transition-all hover:shadow-xl"
     >
       <div onClick={handleItemClick}>
         <ItemContent />
       </div>
-      <div className="flex justify-between items-center px-4 py-2 bg-gray-50">
+      <div className="flex justify-between items-center px-4 py-2 bg-gray-700">
         <Button
           variant="ghost"
           size="sm"
           onClick={toggleExpand}
-          className="text-purple-600 hover:text-purple-700"
+          className="text-indigo-400 hover:text-indigo-300"
         >
           {isExpanded ? <ChevronUp className="h-4 w-4 mr-1" /> : <ChevronDown className="h-4 w-4 mr-1" />}
           {isExpanded ? 'Less' : 'More'}
@@ -132,7 +132,7 @@ const WorkspaceItem = ({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
-      className="group rounded-lg bg-white shadow-md transition-all hover:shadow-lg"
+      className="group rounded-lg bg-gray-800 shadow-md transition-all hover:shadow-lg"
     >
       <div className="flex cursor-pointer items-center justify-between p-4" onClick={handleItemClick}>
         <div className="flex items-center space-x-4">
@@ -145,8 +145,8 @@ const WorkspaceItem = ({
             />
           </div>
           <div>
-            <h2 className="text-lg font-semibold text-gray-900">{workspace.name}</h2>
-            <p className="text-sm text-gray-500 line-clamp-1">{workspace.description}</p>
+            <h2 className="text-lg font-semibold text-white">{workspace.name}</h2>
+            <p className="text-sm text-gray-300 line-clamp-1">{workspace.description}</p>
           </div>
         </div>
         <div className="flex items-center space-x-2">
@@ -155,7 +155,7 @@ const WorkspaceItem = ({
             variant="ghost"
             size="sm"
             onClick={toggleExpand}
-            className="text-purple-600 hover:text-purple-700"
+            className="text-indigo-400 hover:text-indigo-300"
           >
             {isExpanded ? <ChevronUp className="h-4 w-4 mr-1" /> : <ChevronDown className="h-4 w-4 mr-1" />}
             {isExpanded ? 'Less' : 'More'}

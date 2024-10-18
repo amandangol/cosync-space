@@ -8,6 +8,7 @@ const LayoutToggle = ({ layout, handleLayoutChange }) => (
       variant={layout === 'grid' ? 'secondary' : 'ghost'}
       size="icon"
       onClick={() => handleLayoutChange('grid')}
+      className={`text-${layout === 'grid' ? 'blue-500' : 'white'} hover:text-blue-400 hover:bg-gray-700`}
     >
       <Grid className="h-5 w-5" />
     </Button>
@@ -15,6 +16,7 @@ const LayoutToggle = ({ layout, handleLayoutChange }) => (
       variant={layout === 'list' ? 'secondary' : 'ghost'}
       size="icon"
       onClick={() => handleLayoutChange('list')}
+      className={`text-${layout === 'list' ? 'blue-500' : 'white'} hover:text-blue-400 hover:bg-gray-700`}
     >
       <ListIcon className="h-5 w-5" />
     </Button>

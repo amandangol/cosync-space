@@ -1,8 +1,16 @@
 import { motion } from 'framer-motion';
 
 const PageTransition = ({ children }) => {
+  const darkThemeStyles = {
+    backgroundColor: '#1e1e1e', 
+    color: '#f5f5f5',           
+    minHeight: '100vh',         
+    padding: '20px',     
+  };
+
   return (
     <motion.div
+      style={darkThemeStyles}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}

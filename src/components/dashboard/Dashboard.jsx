@@ -111,9 +111,8 @@ const onRenameWorkspace = async (workspaceId, newName) => {
   };
   
 
-return (
-    <div className="min-h-screen bg-gray-100">
-      <Header />
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white">
       <WelcomeSection user={user} />
       <main className="w-full px-4 sm:px-6 lg:px-8 py-8">
         <motion.div
@@ -122,25 +121,25 @@ return (
           transition={{ duration: 0.5 }}
         >
           <div className="mb-8 flex flex-col items-start justify-between space-y-4 sm:flex-row sm:items-center sm:space-y-0">
-            <h1 className="text-3xl font-semibold text-gray-800">Your Workspaces</h1>
+            <h1 className="text-3xl font-semibold text-white">Your Workspaces</h1>
             <NewWorkspaceButton />
           </div>
-        <div className="mb-6 flex flex-col space-y-4 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
-        <SearchBar
-        searchTerm={searchTerm}
-        handleSearch={handleSearch}
-        sortBy={sortBy}
-        setSortBy={handleSortChange}
-        />
+          <div className="mb-6 flex flex-col space-y-4 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
+            <SearchBar
+              searchTerm={searchTerm}
+              handleSearch={handleSearch}
+              sortBy={sortBy}
+              setSortBy={handleSortChange}
+            />
             <LayoutToggle layout={layout} handleLayoutChange={handleLayoutChange} />
-        </div>
-        <AnimatePresence mode="wait">
+          </div>
+          <AnimatePresence mode="wait">
             {isLoading ? (
-            <SkeletonLoader key="skeleton" layout={layout} />
+              <SkeletonLoader key="skeleton" layout={layout} />
             ) : filteredList.length === 0 ? (
-            <EmptyState key="empty" />
+              <EmptyState key="empty" />
             ) : (
-            <WorkspaceList
+              <WorkspaceList
                 key="workspaces"
                 filteredList={filteredList}
                 layout={layout}
@@ -149,20 +148,19 @@ return (
                 setIsDeleteModalOpen={setIsDeleteModalOpen}
                 onRenameWorkspace={onRenameWorkspace}
                 router={router}
-            />
+              />
             )}
-        </AnimatePresence>
+          </AnimatePresence>
         </motion.div>
-    </main>
-    <DeleteWorkspaceModal
+      </main>
+      <DeleteWorkspaceModal
         isOpen={isDeleteModalOpen}
         setIsOpen={setIsDeleteModalOpen}
         workspaceToDelete={workspaceToDelete}
         handleDelete={handleDelete}
-    />
+      />
     </div>
-    
-);
+  );
 };
 
 export default Dashboard;

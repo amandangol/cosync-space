@@ -62,17 +62,17 @@ const Sidebar = ({ documents = [], loading, params, handleCreateDocument, handle
       animate={{ width: isCollapsed ? 64 : 256, opacity: 1 }}
       exit={{ width: 0, opacity: 0 }}
       transition={{ duration: 0.3 }}
-      className="bg-gray-50 text-gray-800 h-screen flex flex-col border-r border-gray-200"
+      className="bg-gray-900 text-gray-300 h-screen flex flex-col border-r border-gray-700"
     >
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.2 }}
-        className={`flex items-center justify-between border-b border-gray-200 p-4 ${isCollapsed ? 'flex-col' : ''}`}
+        className={`flex items-center justify-between border-b border-gray-700 p-4 ${isCollapsed ? 'flex-col' : ''}`}
       >
-        {!isCollapsed && <h1 className="text-xl font-bold truncate text-gray-800">{workspaceName}</h1>}
+        {!isCollapsed && <h1 className="text-xl font-bold truncate text-gray-100">{workspaceName}</h1>}
         <Tooltip content={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}>
-          <Button onClick={toggleSidebar} variant="ghost" size="sm" className="text-gray-600 hover:bg-gray-200">
+          <Button onClick={toggleSidebar} variant="ghost" size="sm" className="text-gray-400 hover:bg-gray-800">
             {isCollapsed ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
           </Button>
         </Tooltip>
@@ -87,7 +87,7 @@ const Sidebar = ({ documents = [], loading, params, handleCreateDocument, handle
             className="flex flex-col items-center py-4 space-y-4"
           >
             <Tooltip content="Create new document">
-              <Button onClick={handleCreateDocument} size="sm" className="bg-blue-500 hover:bg-blue-600 text-white">
+              <Button onClick={handleCreateDocument} size="sm" className="bg-blue-600 hover:bg-blue-700 text-white">
                 {loading ? <Loader className="h-4 w-4 animate-spin" /> : <FolderPlus size={16} />}
               </Button>
             </Tooltip>
@@ -98,14 +98,14 @@ const Sidebar = ({ documents = [], loading, params, handleCreateDocument, handle
                   size="sm"
                   onClick={() => router.push(`/workspace/${params?.workspaceid}/${doc?.id}`)}
                   className={`w-10 h-10 flex items-center justify-center ${
-                    doc?.id === params?.documentid ? 'bg-blue-100' : ''
+                    doc?.id === params?.documentid ? 'bg-gray-800' : ''
                   }`}
                 >
-                  {doc.emoji || <FileText className="text-gray-600" size={20} />}
+                  {doc.emoji || <FileText className="text-gray-400" size={20} />}
                 </Button>
               </Tooltip>
             ))}
-         </motion.div>
+          </motion.div>
         ) : (
           <motion.div
             initial={{ opacity: 0 }}
@@ -115,18 +115,18 @@ const Sidebar = ({ documents = [], loading, params, handleCreateDocument, handle
             className="flex flex-col h-full overflow-hidden p-4"
           >
             <div className="relative mb-4">
-              <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
+              <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-500" size={16} />
               <Input
                 type="text"
                 placeholder="Search documents..."
-                className="w-full pl-8 pr-4 py-2 bg-white text-gray-800 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                className="w-full pl-8 pr-4 py-2 bg-gray-800 text-gray-300 rounded-md border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 value={searchTerm}
                 onChange={handleSearchChange}
               />
             </div>
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-gray-700">My Documents ({documentCount})</h2>
-              <Button onClick={handleCreateDocument} size="sm" className="bg-blue-500 hover:bg-blue-600 text-white">
+              <h2 className="text-lg font-semibold text-gray-200">My Documents ({documentCount})</h2>
+              <Button onClick={handleCreateDocument} size="sm" className="bg-blue-600 hover:bg-blue-700 text-white">
                 {loading ? <Loader className="h-4 w-4 animate-spin" /> : <FolderPlus size={16} />}
               </Button>
             </div>
@@ -136,12 +136,12 @@ const Sidebar = ({ documents = [], loading, params, handleCreateDocument, handle
                   <div
                     key={doc?.id}
                     onClick={() => router.push(`/workspace/${params?.workspaceid}/${doc?.id}`)}
-                    className={`flex cursor-pointer items-center justify-between rounded-lg p-2 hover:bg-gray-200 transition-colors duration-200 ${
-                      doc?.id === params?.documentid ? 'bg-blue-100' : ''
+                    className={`flex cursor-pointer items-center justify-between rounded-lg p-2 hover:bg-gray-800 transition-colors duration-200 ${
+                      doc?.id === params?.documentid ? 'bg-gray-800' : ''
                     }`}
                   >
                     <div className="flex items-center gap-2">
-                      {doc.emoji || <FileText className="text-gray-600" size={20} />}
+                      {doc.emoji || <FileText className="text-gray-400" size={20} />}
                       <span className="truncate">{doc.name}</span>
                     </div>
                     <DropdownMenu>
@@ -166,9 +166,9 @@ const Sidebar = ({ documents = [], loading, params, handleCreateDocument, handle
             <div className="mt-auto">
               <Progress
                 value={(documentCount / MAX_DOCUMENTS_COUNT) * 100}
-                className="h-2 rounded-full bg-gray-200 mb-2"
+                className="h-2 rounded-full bg-gray-700 mb-2"
               />
-              <p className="text-sm text-gray-600 mb-2">
+              <p className="text-sm text-gray-400 mb-2">
                 {documentCount} out of {MAX_DOCUMENTS_COUNT} files used
               </p>
             </div>
@@ -178,4 +178,5 @@ const Sidebar = ({ documents = [], loading, params, handleCreateDocument, handle
     </motion.aside>
   );
 };
-export  default Sidebar
+
+export default Sidebar;
