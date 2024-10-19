@@ -20,6 +20,11 @@ CoSyncSpace is a cutting-edge collaborative workspace platform designed to strea
 - **Responsive Design**: Enjoy a seamless experience across desktop and mobile devices with a responsive layout.
 - **Dark Mode Support**: Work comfortably in low-light environments with dark mode.
 
+ <img src="https://github.com/user-attachments/assets/47a8abb4-af5c-4174-9418-fba6512bad84" alt="landing" height="500"> <img src="https://github.com/user-attachments/assets/84e4bd80-daf2-4297-8bd9-a2affb033c63" alt="landing" height="500">
+
+
+
+
 ## Tech Stack
 
 ### Frontend
