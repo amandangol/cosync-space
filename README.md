@@ -20,26 +20,6 @@ CoSyncSpace is a cutting-edge collaborative workspace platform designed to strea
 - **Responsive Design**: Enjoy a seamless experience across desktop and mobile devices with a responsive layout.
 - **Dark Mode Support**: Work comfortably in low-light environments with dark mode.
 
- <img src="https://github.com/user-attachments/assets/47a8abb4-af5c-4174-9418-fba6512bad84" alt="landing" height="300"> <img src="https://github.com/user-attachments/assets/84e4bd80-daf2-4297-8bd9-a2affb033c63" alt="landing" height="300"> <img src="https://github.com/user-attachments/assets/c8171ee8-c1ae-4292-8c3a-e6e846fc6b81" alt="signup" height="300"> <img src = "https://github.com/user-attachments/assets/185aa152-1512-4978-b8b4-4c975902efb8" alt="dashboard" height="300"> <img src="https://github.com/user-attachments/assets/72da0766-85de-4279-8284-945eda2354ef" alt="dashboard2" height="300"> <img src="https://github.com/user-attachments/assets/5d9d3751-92ed-4ad2-8912-bee0a4c732e1" alt="create" height="300">  <img src="https://github.com/user-attachments/assets/aaad0e92-1125-4412-b41e-864c2a2a6f42" alt="No Workspace Found" height="300">
- <img src="https://github.com/user-attachments/assets/4fd9c2f8-788d-451a-b321-da6f4a9a9da8" alt="Welcome to workspace" height="300">
- <img src="https://github.com/user-attachments/assets/c1475ab3-12e8-491e-9dd3-f477671e4ae3" alt="workspaces" height="300">
- <img src="https://github.com/user-attachments/assets/1d06275c-a900-4be5-8e0f-ddc84a8c3026" alt="generate AI template" height="300">
- <img src="https://github.com/user-attachments/assets/a9ae9a0f-2f97-4a63-a385-41f893d17523" alt="Document Mode" height="300">
- <img src="https://github.com/user-attachments/assets/930847c4-95fb-4b2a-b278-56d3fcf92fc6" alt="Whiteboard Mode" height="300">
-  <img src="https://github.com/user-attachments/assets/66c319e9-f36a-4f7f-b7a0-b64fe7d985ca" alt="Whiteboard Full screen " height="300">
- <img src="https://github.com/user-attachments/assets/5a7b174d-c4cf-4bbe-be9a-e4463cbeeeff" alt="Manage Org" height="300">
- <img src="https://github.com/user-attachments/assets/e08028a1-d1b0-4e80-b22c-8f0c14416f89" alt="Update profile" height="300">
-
- 
-
-
-
-
-
-
-
-
-
 ## Tech Stack
 
 ### Frontend
@@ -119,10 +99,19 @@ CoSyncSpace is a cutting-edge collaborative workspace platform designed to strea
 6. Collaborate with your team in real-time, using the commenting system for discussions.
 7. Use the secure sharing features to invite others to your workspace or specific documents.
 
-## Contributing
-
-We welcome contributions to CoSyncSpace! Please see our [Contributing Guide](CONTRIBUTING.md) for more details on how to get started.
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+## Snapshots
+ <img src="https://github.com/user-attachments/assets/47a8abb4-af5c-4174-9418-fba6512bad84" alt="landing" height="300">
+ <img src="https://github.com/user-attachments/assets/84e4bd80-daf2-4297-8bd9-a2affb033c63" alt="landing" height="300">
+ <img src="https://github.com/user-attachments/assets/c8171ee8-c1ae-4292-8c3a-e6e846fc6b81" alt="signup" height="300">
+ <img src = "https://github.com/user-attachments/assets/185aa152-1512-4978-b8b4-4c975902efb8" alt="dashboard" height="300">
+ <img src="https://github.com/user-attachments/assets/72da0766-85de-4279-8284-945eda2354ef" alt="dashboard2" height="300">
+ <img src="https://github.com/user-attachments/assets/5d9d3751-92ed-4ad2-8912-bee0a4c732e1" alt="create" height="300">
+ <img src="https://github.com/user-attachments/assets/aaad0e92-1125-4412-b41e-864c2a2a6f42" alt="No Workspace Found" height="300">
+ <img src="https://github.com/user-attachments/assets/4fd9c2f8-788d-451a-b321-da6f4a9a9da8" alt="Welcome to workspace" height="300">
+ <img src="https://github.com/user-attachments/assets/c1475ab3-12e8-491e-9dd3-f477671e4ae3" alt="workspaces" height="300">
+ <img src="https://github.com/user-attachments/assets/1d06275c-a900-4be5-8e0f-ddc84a8c3026" alt="generate AI template" height="300">
+ <img src="https://github.com/user-attachments/assets/a9ae9a0f-2f97-4a63-a385-41f893d17523" alt="Document Mode" height="300">
+ <img src="https://github.com/user-attachments/assets/930847c4-95fb-4b2a-b278-56d3fcf92fc6" alt="Whiteboard Mode" height="300">
+ <img src="https://github.com/user-attachments/assets/66c319e9-f36a-4f7f-b7a0-b64fe7d985ca" alt="Whiteboard Full screen " height="300">
+ <img src="https://github.com/user-attachments/assets/5a7b174d-c4cf-4bbe-be9a-e4463cbeeeff" alt="Manage Org" height="300">
+ <img src="https://github.com/user-attachments/assets/e08028a1-d1b0-4e80-b22c-8f0c14416f89" alt="Update profile" height="300">
