@@ -29,8 +29,8 @@ const WelcomeSection = ({ user, onCreateWorkspace, workspaceCount }) => (
             transition={{ delay: 0.4, duration: 0.5 }}
             className="text-lg text-indigo-100 max-w-2xl mb-4"
           >
-            Simplify collaboration with a platform for real-time editing, task management, and seamless teamwork.
-          </motion.p>
+        Streamline collaboration and boost productivity with our intuitive platform.
+        </motion.p>
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}

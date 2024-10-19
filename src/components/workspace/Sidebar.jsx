@@ -149,10 +149,10 @@ const Sidebar = ({ documents = [], loading, params, handleCreateDocument, handle
                       doc?.id === params?.documentid ? 'bg-gray-800' : ''
                     }`}
                   >
-                    <div className="flex items-center gap-2">
-                      {doc.emoji || <FileText className="text-gray-400" size={20} />}
-                      <span className="truncate">{doc.name}</span>
-                    </div>
+                    <div className="flex items-center gap-2 w-full">
+      {doc.emoji || <FileText className="text-gray-400" size={20} />}
+      <span className="truncate w-full">{doc.name}</span>
+    </div>
                     <DropdownMenu>
                       <DropdownMenuTrigger>
                         <MoreVertical size={16} className="text-gray-500" />

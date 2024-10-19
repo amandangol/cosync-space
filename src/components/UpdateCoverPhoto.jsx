@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import Image from 'next/image';
-import ImageCover from '@/assets/ImageCover'; 
+import ImageCover from '@/assets/CoverImages'; 
 import { DialogClose } from '@radix-ui/react-dialog';
 import { Button } from '@/components/ui/button';
 import {

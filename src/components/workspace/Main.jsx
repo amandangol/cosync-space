@@ -297,12 +297,13 @@ const Main = ({ params, documents, handleCreateDocument, handleDeleteDocument, u
           transition={{ delay: 0.3 }}
           className="relative h-40 overflow-hidden"
         >
-          <Image
-            src={coverPhoto}
-            alt="Document cover"
-            layout="fill"
-            objectFit="cover"
-          />
+         <Image
+  src={`${coverPhoto}?v=${Date.now()}`}
+  alt="Document cover"
+  layout="fill"
+  objectFit="cover"
+  unoptimized
+/>
           <div className="absolute inset-0 bg-black bg-opacity-30 flex items-end justify-between p-4">
            
             <UpdateCoverPhoto setNewCover={handleUpdateCoverPhoto}>
