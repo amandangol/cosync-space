@@ -6,56 +6,61 @@ import { AnimatePresence, motion } from 'framer-motion';
 
 import Sidebar from '@components/workspace/Sidebar';
 import Main from '@components/workspace/Main';
-import CommentSection from '@components/workspace/CommentSection';
+import CommentSidebar from '@components/workspace/CommentSidebar';
 import Whiteboard from '@components/workspace/Whiteboard';
 import { getUsersFromFirestore, getMentionSuggestions } from '@/lib/firebaseUserUtils';
 import WorkspaceSkeleton from '@components/workspace/WorkspaceSkeleton';
 import { Button } from '@/components/ui/button';
 import { Menu, PenTool, X, Loader } from 'lucide-react';
 
-import { getDocumentList, getDocument, handleCreateDocument, handleDeleteDocument, updateDocument } from '@lib/firebaseDocumentUtils';
+import { getDocumentList, getDocument, handleCreateDocument, handleDeleteDocument, updateDocument } from '@/lib/firebaseDocumentUtils';
+import { getWhiteboardData, updateWhiteboardData } from '@/lib/firebaseWhiteboardUtils';
 
 const WorkspaceLayout = ({ params }) => {
   const [documents, setDocuments] = useState([]);
   const [documentInfo, setDocumentInfo] = useState(null);
+  const [whiteboardData, setWhiteboardData] = useState(null);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isWhiteboardMode, setIsWhiteboardMode] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isChangingDocument, setIsChangingDocument] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isCommentSidebarOpen, setIsCommentSidebarOpen] = useState(true);
   const { user } = useUser();
   const router = useRouter();
 
-  const toggleSidebar = () => setIsCollapsed(!isCollapsed);
+  const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
+  const toggleCommentSidebar = () => setIsCommentSidebarOpen(!isCommentSidebarOpen);
   const toggleWhiteboardMode = () => setIsWhiteboardMode(!isWhiteboardMode);
 
   useEffect(() => {
     let unsubscribe = () => {};
 
     if (params?.workspaceid) {
-      unsubscribe = getDocumentList(params.workspaceid, (docs) => {
-        setDocuments(docs);
-        setIsLoading(false);
-      });
+      unsubscribe = getDocumentList(params.workspaceid, setDocuments, setIsLoading);
     }
 
     return () => unsubscribe();
   }, [params?.workspaceid]);
 
   useEffect(() => {
-    let unsubscribe = () => {};
+    let unsubscribeDoc = () => {};
+    let unsubscribeWhiteboard = () => {};
 
     if (params?.documentid) {
       setIsChangingDocument(true);
-      unsubscribe = getDocument(params.documentid, (doc) => {
-        setDocumentInfo(doc);
-        setIsChangingDocument(false);
-      });
+      unsubscribeDoc = getDocument(params.documentid, setDocumentInfo, () => setIsChangingDocument(false));
+      unsubscribeWhiteboard = getWhiteboardData(params.documentid, setWhiteboardData, () => {});
     } else {
       setDocumentInfo(null);
+      setWhiteboardData(null);
       setIsChangingDocument(false);
     }
 
-    return () => unsubscribe();
+    return () => {
+      unsubscribeDoc();
+      unsubscribeWhiteboard();
+    };
   }, [params?.documentid]);
 
   const createDocument = useCallback(() => {
@@ -72,7 +77,13 @@ const WorkspaceLayout = ({ params }) => {
     setIsChangingDocument(false);
   }, [params, router]);
 
-  if (isLoading) {
+  const handleWhiteboardUpdate = useCallback((newData) => {
+    if (params?.documentid) {
+      updateWhiteboardData(params.documentid, newData);
+    }
+  }, [params?.documentid]);
+
+  if (!user) {
     return <WorkspaceSkeleton />;
   }
 
@@ -86,16 +97,28 @@ const WorkspaceLayout = ({ params }) => {
         <ClientSideSuspense fallback={<WorkspaceSkeleton />}>
           {() => (
             <div className="flex h-screen bg-gray-900 text-white">
-              <Sidebar
-                documents={documents}
-                loading={isChangingDocument}
-                params={params}
-                router={router}
-                handleCreateDocument={createDocument}
-                handleDeleteDocument={deleteDocument}
-                isCollapsed={isCollapsed}
-                toggleSidebar={toggleSidebar}
-              />
+              <AnimatePresence>
+                {isSidebarOpen && (
+                  <motion.div
+                    initial={{ x: -300 }}
+                    animate={{ x: 0 }}
+                    exit={{ x: -300 }}
+                    transition={{ duration: 0.3 }}
+                    className="w-64 border-r border-gray-700 bg-gray-800"
+                  >
+                    <Sidebar
+                      documents={documents}
+                      loading={isChangingDocument}
+                      params={params}
+                      router={router}
+                      handleCreateDocument={createDocument}
+                      handleDeleteDocument={deleteDocument}
+                      isCollapsed={isCollapsed}
+                      toggleSidebar={toggleSidebar}
+                    />
+                  </motion.div>
+                )}
+              </AnimatePresence>
               <div className="flex-1 flex flex-col overflow-hidden">
                 <header className="bg-gray-800 shadow-sm p-4 flex justify-between items-center">
                   <div className="flex items-center">
@@ -108,7 +131,7 @@ const WorkspaceLayout = ({ params }) => {
                     {isWhiteboardMode ? (
                       <>
                         <X className="mr-2 h-4 w-4" />
-                        Exit Whiteboard
+                        Exit Whiteboard 
                       </>
                     ) : (
                       <>
@@ -127,24 +150,33 @@ const WorkspaceLayout = ({ params }) => {
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         transition={{ duration: 0.2 }}
+                        className="h-full w-full"
                       >
-                        <Main 
-                          params={params}
-                          documentInfo={documentInfo}
-                          updateDocument={(key, value) => updateDocument(params?.documentid, key, value)}
-                          documents={documents}
-                          handleCreateDocument={createDocument}
-                          handleDeleteDocument={deleteDocument}
-                          user={user}
-                          router={router}
-                          toggleSidebar={toggleSidebar}
-                          isCollapsed={isCollapsed}
-                        />
+                        {isWhiteboardMode ? (
+                          <Whiteboard
+                            documentId={params?.documentid}
+                            data={whiteboardData}
+                            onUpdate={handleWhiteboardUpdate}
+                          />
+                        ) : (
+                          <Main 
+                            params={params}
+                            documentInfo={documentInfo}
+                            updateDocument={(key, value) => updateDocument(params?.documentid, key, value)}
+                            documents={documents}
+                            handleCreateDocument={createDocument}
+                            handleDeleteDocument={deleteDocument}
+                            user={user}
+                            router={router}
+                            toggleSidebar={toggleSidebar}
+                            isCollapsed={isCollapsed}
+                          />
+                        )}
                       </motion.div>
                     </AnimatePresence>
                   </div>
                   <AnimatePresence>
-                    {params?.documentid && !isWhiteboardMode && (
+                    {params?.documentid && !isWhiteboardMode && isCommentSidebarOpen && (
                       <motion.div 
                         initial={{ opacity: 0, x: 300 }}
                         animate={{ opacity: 1, x: 0 }}
@@ -152,7 +184,7 @@ const WorkspaceLayout = ({ params }) => {
                         transition={{ duration: 0.3 }}
                         className="w-80 border-l border-gray-700 bg-gray-800"
                       >
-                        <CommentSection 
+                        <CommentSidebar 
                           currentUser={user}
                           getUsersFromFirestore={getUsersFromFirestore}
                         />
@@ -166,27 +198,6 @@ const WorkspaceLayout = ({ params }) => {
                   )}
                 </main>
               </div>
-              <AnimatePresence>
-                {isWhiteboardMode && (
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.3 }}
-                    className="fixed inset-0 bg-gray-900 z-50"
-                  >
-                    <Whiteboard params={params} />
-                    <Button
-                      onClick={toggleWhiteboardMode}
-                      variant="outline"
-                      className="absolute top-4 right-4 flex items-center bg-gray-700 text-white hover:bg-gray-600"
-                    >
-                      <X className="mr-2 h-4 w-4" />
-                      Exit Whiteboard
-                    </Button>
-                  </motion.div>
-                )}
-              </AnimatePresence>
             </div>
           )}
         </ClientSideSuspense>

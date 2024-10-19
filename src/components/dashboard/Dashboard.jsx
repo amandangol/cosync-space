@@ -1,8 +1,9 @@
-"use client"
+"use client"; 
+
 import React, { Suspense, useState, useEffect, useCallback } from 'react';
 import { useAuth, useUser } from '@clerk/nextjs';
 import { db } from '@config/firebaseConfig';
-import { collection, deleteDoc, doc, onSnapshot, query, where,updateDoc } from 'firebase/firestore';
+import { collection, deleteDoc, doc, onSnapshot, query, where, updateDoc } from 'firebase/firestore';
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
@@ -17,89 +18,89 @@ import DeleteWorkspaceModal from './DeleteWorkspaceModal';
 import SkeletonLoader from './SkeletonLoader';
 import NewWorkspaceButton from './NewWorkspaceButton';
 
-
 const Dashboard = () => {
-const [workspaceList, setWorkspaceList] = useState([]);
-const [filteredList, setFilteredList] = useState([]);
-const [layout, setLayout] = useState('grid');
-const [searchTerm, setSearchTerm] = useState('');
-const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-const [workspaceToDelete, setWorkspaceToDelete] = useState(null);
+  const [workspaceList, setWorkspaceList] = useState([]);
+  const [filteredList, setFilteredList] = useState([]);
+  const [layout, setLayout] = useState('grid');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [workspaceToDelete, setWorkspaceToDelete] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [sortBy, setSortBy] = useState('lastUpdated');
 
-const [isLoading, setIsLoading] = useState(true);
-const [sortBy, setSortBy] = useState('lastUpdated');
+  const { user } = useUser();
+  const { orgId } = useAuth();
+  const router = useRouter();
+  
 
-const { user } = useUser();
-const { orgId } = useAuth();
-const router = useRouter();
-
-useEffect(() => {
+  useEffect(() => {
     const savedLayout = localStorage.getItem('workspaceLayout');
     if (savedLayout) {
-    setLayout(savedLayout);
+      setLayout(savedLayout);
     }
     const savedSortBy = localStorage.getItem('workspaceSortBy');
-if (savedSortBy) {
-  setSortBy(savedSortBy);
-}
-}, []);
+    if (savedSortBy) {
+      setSortBy(savedSortBy);
+    }
+  }, []);
 
-const handleLayoutChange = (newLayout) => {
+  const handleLayoutChange = (newLayout) => {
     setLayout(newLayout);
     localStorage.setItem('workspaceLayout', newLayout);
-};
-const handleSortChange = (newSortBy) => {
+  };
+
+  const handleSortChange = (newSortBy) => {
     setSortBy(newSortBy);
     localStorage.setItem('workspaceSortBy', newSortBy);
   };
 
-const fetchWorkspaceList = useCallback(() => {
+  const fetchWorkspaceList = useCallback(() => {
     if (!user) return;
     setIsLoading(true);
     const q = query(
-    collection(db, 'workspaces'),
-    where('organization', '==', orgId || user?.primaryEmailAddress?.emailAddress)
+      collection(db, 'workspaces'),
+      where('organization', '==', orgId || user?.primaryEmailAddress?.emailAddress)
     );
     return onSnapshot(q, (snapshot) => {
-    const data = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-    setWorkspaceList(data);
-    setFilteredList(data);
-    setIsLoading(false);
+      const data = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+      setWorkspaceList(data);
+      setFilteredList(data);
+      setIsLoading(false);
     });
-}, [user, orgId]);
+  }, [user, orgId]);
 
-useEffect(() => {
+  useEffect(() => {
     const unsubscribe = fetchWorkspaceList();
     return () => unsubscribe && unsubscribe();
-}, [fetchWorkspaceList]);
+  }, [fetchWorkspaceList]);
 
-const handleDelete = async (id) => {
+  const handleDelete = async (id) => {
     setIsDeleteModalOpen(false);
     try {
-    await deleteDoc(doc(db, 'workspaces', id));
-    toast.success('Workspace deleted successfully');
-    setWorkspaceList((prevList) => prevList.filter((workspace) => workspace.id !== id));
-    setFilteredList((prevList) => prevList.filter((workspace) => workspace.id !== id));
+      await deleteDoc(doc(db, 'workspaces', id));
+      toast.success('Workspace deleted successfully');
+      setWorkspaceList((prevList) => prevList.filter((workspace) => workspace.id !== id));
+      setFilteredList((prevList) => prevList.filter((workspace) => workspace.id !== id));
     } catch (error) {
-    console.error('Error deleting workspace:', error);
-    toast.error('Failed to delete workspace');
+      console.error('Error deleting workspace:', error);
+      toast.error('Failed to delete workspace');
     }
-};
+  };
 
-const handleSearch = (value) => {
+  const handleSearch = (value) => {
     setSearchTerm(value);
     const filtered = workspaceList.filter((workspace) =>
-    workspace.name.toLowerCase().includes(value.toLowerCase())
+      workspace.name.toLowerCase().includes(value.toLowerCase())
     );
     setFilteredList(filtered);
-};
+  };
 
-const onRenameWorkspace = async (workspaceId, newName) => {
+  const onRenameWorkspace = async (workspaceId, newName) => {
     try {
-        const workspaceRef = doc(db, 'workspaces', workspaceId);
-        await updateDoc(workspaceRef, { name: newName });
-      setWorkspaceList(prevList =>
-        prevList.map(workspace =>
+      const workspaceRef = doc(db, 'workspaces', workspaceId);
+      await updateDoc(workspaceRef, { name: newName });
+      setWorkspaceList((prevList) =>
+        prevList.map((workspace) =>
           workspace.id === workspaceId ? { ...workspace, name: newName } : workspace
         )
       );      
@@ -109,7 +110,6 @@ const onRenameWorkspace = async (workspaceId, newName) => {
       toast.error('Failed to rename workspace');
     }
   };
-  
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white">

@@ -29,7 +29,7 @@ const WorkspaceItem = ({
         onClick={() => router.push(`/workspace/${workspace.id}`)}
       >
         <Image
-          src={workspace.cover || "/images/default-cover.jpg"}
+          src={workspace.cover || "/images/default-cover.png"}
           alt={`${workspace.name} cover`}
           layout="fill"
           objectFit="cover"
@@ -138,7 +138,7 @@ const WorkspaceItem = ({
         <div className="flex items-center space-x-4">
           <div className="relative h-16 w-16 overflow-hidden rounded-lg">
             <Image
-              src={workspace.cover || "/images/default-cover.jpg"}
+              src={workspace.cover || "/images/default-cover.png"}
               alt={`${workspace.name} cover`}
               layout="fill"
               objectFit="cover"

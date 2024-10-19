@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
-import { PlusCircle, FileText, Share2, Download, Edit, ChevronDown, Clock} from 'lucide-react';
+import { PlusCircle, FileText, Share2, Download, Edit, ChevronDown, Clock, Columns } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import DocumentContent from './DocumentContent';
-import CoverModal from '../CoverModal';
-import { EmojiSelector } from '@components/EmojiSelector';
+import Whiteboard from './Whiteboard';
+import UpdateCoverPhoto from '../UpdateCoverPhoto';
+import { EmojiSelector } from '@/components/EmojiSelector';
 import { Tooltip } from '@/components/ui/tooltip';
 import { toast } from 'sonner';
 import {
@@ -15,20 +16,48 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Document, Packer, Paragraph, TextRun } from 'docx';
+import { getDocument, updateDocument } from '@/lib/firebaseDocumentUtils';
+import { getWhiteboardData, updateWhiteboardData } from '@/lib/firebaseWhiteboardUtils';
 
-const Main = ({ params, documentInfo, updateDocument, documents, handleCreateDocument, handleDeleteDocument, user, router }) => {
+const Main = ({ params, documents, handleCreateDocument, handleDeleteDocument, user, router }) => {
   const [isEditing, setIsEditing] = useState(false);
-  const [editedName, setEditedName] = useState(documentInfo?.name || "Untitled Document");
-  const [lastModified, setLastModified] = useState(documentInfo?.lastModified || null);
+  const [editedName, setEditedName] = useState("Untitled Document");
+  const [lastModified, setLastModified] = useState(null);
+  const [documentInfo, setDocumentInfo] = useState(null);
+  const [whiteboardData, setWhiteboardData] = useState(null);
+  const [isWhiteboardMode, setIsWhiteboardMode] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [coverPhoto, setCoverPhoto] = useState("/images/default-cover.png");
+
+  const whiteboardRef = useRef(null);
 
   useEffect(() => {
-    setLastModified(documentInfo?.lastModified || null);
-  }, [documentInfo?.lastModified]);
+    let unsubscribeDoc = () => {};
+    let unsubscribeWhiteboard = () => {};
 
+    if (params?.documentid) {
+      unsubscribeDoc = getDocument(params.documentid, (doc) => {
+        setDocumentInfo(doc);
+        setEditedName(doc?.name || "Untitled Document");
+        setLastModified(doc?.lastModified || null);
+        setCoverPhoto(doc?.cover || "/images/default-cover.png");
+        setIsLoading(false);
+      });
+      unsubscribeWhiteboard = getWhiteboardData(params.documentid, setWhiteboardData, () => {});
+    } else {
+      setDocumentInfo(null);
+      setWhiteboardData(null);
+      setIsLoading(false);
+    }
+
+    return () => {
+      unsubscribeDoc();
+      unsubscribeWhiteboard();
+    };
+  }, [params?.documentid]);
 
   const handleRename = () => {
     setIsEditing(true);
-    setEditedName(documentInfo?.name || "Untitled Document");
   };
 
   const handleNameChange = (e) => {
@@ -36,7 +65,7 @@ const Main = ({ params, documentInfo, updateDocument, documents, handleCreateDoc
   };
 
   const handleNameSubmit = () => {
-    updateDocument('name', editedName);
+    updateDocument(params?.documentid, 'name', editedName);
     setIsEditing(false);
   };
 
@@ -65,6 +94,11 @@ const Main = ({ params, documentInfo, updateDocument, documents, handleCreateDoc
     return isNaN(date.getTime()) ? 'Never' : date.toLocaleString();
   };
 
+  const toggleWhiteboardMode = () => {
+    setIsWhiteboardMode(!isWhiteboardMode);
+  };
+
+
   const convertEditorJSToDocx = (content) => {
     if (!content || !content.blocks) {
       throw new Error('Invalid document content structure');
@@ -91,7 +125,6 @@ const Main = ({ params, documentInfo, updateDocument, documents, handleCreateDoc
                   level: 0
                 }
               });
-            // Add more cases for other block types as needed
             default:
               return new Paragraph({
                 text: JSON.stringify(block.data)
@@ -104,51 +137,58 @@ const Main = ({ params, documentInfo, updateDocument, documents, handleCreateDoc
   };
 
   const handleDownload = async () => {
-    if (!documentInfo) {
-      toast.error('No document information available');
-      return;
-    }
-    
     try {
-      console.log('Document Info:', JSON.stringify(documentInfo, null, 2));
-
-      let content = documentInfo.content;
-
-      if (!content) {
-        throw new Error('No document content found');
+      if (isWhiteboardMode && whiteboardRef.current) {
+        // Download whiteboard content as PNG
+        const canvas = whiteboardRef.current.querySelector('canvas');
+        if (canvas) {
+          // Convert the canvas content to a data URL
+          const pngUrl = canvas.toDataURL('image/png');
+  
+          // Create a download link
+          const link = document.createElement('a');
+          link.href = pngUrl;
+          link.download = `${documentInfo.name || 'whiteboard'}.png`;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+  
+          toast.success('Whiteboard image downloaded successfully!');
+        } else {
+          toast.error('No whiteboard content found');
+        }
+      } else {
+        // Download document content (existing logic)
+        const content = documentInfo.content;
+        if (!content) {
+          throw new Error('No document content found');
+        }
+  
+        // Convert the content to a DOCX document
+        const docx = convertEditorJSToDocx(content);
+        const blob = await Packer.toBlob(docx);
+        const url = URL.createObjectURL(blob);
+        
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `${documentInfo.name || 'document'}.docx`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        URL.revokeObjectURL(url);
+        toast.success('Document downloaded successfully!');
       }
-
-      const docx = convertEditorJSToDocx(content);
-      
-      // Generate blob from docx
-      const blob = await Packer.toBlob(docx);
-      
-      // Create download link
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `${documentInfo.name || 'document'}.docx`;
-      
-      // Trigger download
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      
-      // Clean up
-      URL.revokeObjectURL(url);
-      
-      toast.success('Document downloaded successfully!');
     } catch (error) {
-      console.error('Error downloading document:', error);
-      toast.error(`Failed to download document: ${error.message}`);
+      console.error('Error downloading content:', error);
+      toast.error(`Failed to download content: ${error.message}`);
     }
   };
-
-  const handleUpdateDocument = (field, value) => {
-    updateDocument(field, value);
-    if (field === 'lastModified') {
-      setLastModified(value);
-    }
+  
+  
+  const handleUpdateCoverPhoto = (newCover) => {
+    updateDocument(params?.documentid, 'cover', newCover);
+    setCoverPhoto(newCover);
   };
   
   if (!params?.documentid) {
@@ -200,7 +240,7 @@ const Main = ({ params, documentInfo, updateDocument, documents, handleCreateDoc
               <h3 className="text-2xl font-semibold mb-4 text-gray-200">
                 Recent Documents:
               </h3>
-              <div className=" grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
                 {documents.slice(0, 6).map((doc, index) => (
                   <motion.div
                     key={doc.id}
@@ -236,6 +276,7 @@ const Main = ({ params, documentInfo, updateDocument, documents, handleCreateDoc
       </motion.div>
     );
   }
+
   return (
     <motion.div 
       initial={{ opacity: 0 }}
@@ -245,22 +286,27 @@ const Main = ({ params, documentInfo, updateDocument, documents, handleCreateDoc
     >
       <div className="sticky top-0 z-10 bg-gray-900 shadow-sm">
         <motion.div 
-          initial={{ opacity: 0, y: -20 }}
+          initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="relative h-32 w-full overflow-hidden"
+          transition={{ delay: 0.3 }}
+          className="relative h-40 overflow-hidden"
         >
           <Image
-            src={documentInfo?.cover || "/images/default-cover.jpg"}
+            src={coverPhoto}
             alt="Document cover"
             layout="fill"
             objectFit="cover"
           />
-          <CoverModal setNewCover={cover => updateDocument('cover', cover)}>
-            <Button variant="ghost" className="absolute bottom-2 right-2 bg-gray-800/80 hover:bg-gray-700 text-white rounded-md">
-              Change Cover
-            </Button>
-          </CoverModal>
+          <div className="absolute inset-0 bg-black bg-opacity-30 flex items-end justify-between p-4">
+            <h1 className="text-3xl font-bold text-white drop-shadow-lg">
+              {documentInfo?.name || "Untitled Document"}
+            </h1>
+            <UpdateCoverPhoto setNewCover={handleUpdateCoverPhoto}>
+              <Button variant="ghost" className="bg-gray-800/80 hover:bg-gray-700 text-white rounded-md">
+                Change Cover
+              </Button>
+            </UpdateCoverPhoto>
+          </div>
         </motion.div>
         <motion.div 
           initial={{ opacity: 0, y: -10 }}
@@ -300,29 +346,15 @@ const Main = ({ params, documentInfo, updateDocument, documents, handleCreateDoc
             </AnimatePresence>
           </div>
           <div className="flex items-center space-x-2">
-            <AnimatePresence mode="wait">
-              {lastModified && (
-                <motion.span 
-                  key={lastModified}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -20 }}
-                  className="text-sm text-gray-300 flex items-center mr-4"
-                >
-                  <Clock className="w-4 h-4 mr-1" />
-                  Last modified: {formatDate(lastModified)}
-                </motion.span>
-              )}
-            </AnimatePresence>
             <Tooltip content="Share">
-              <Button variant="ghost" size="icon" onClick={handleShare} className="hover:bg-gray-700 text-blue-400 rounded-full">
+              <Button variant="ghost" size="icon" onClick={handleShare} className="hover:bg-white text-blue-400 rounded-full">
                 <Share2 className="h-5 w-5" />
               </Button>
             </Tooltip>
-            <Tooltip content="Download">
-            <Button variant="ghost" size="icon" onClick={handleDownload} className="hover:bg-gray-700 text-blue-400 rounded-full">
-              <Download className="h-5 w-5" />
-            </Button>
+            <Tooltip content={`Download ${isWhiteboardMode ? 'Whiteboard' : 'Document'}`}>
+              <Button variant="ghost" size="icon" onClick={handleDownload} className="hover:bg-white text-blue-400 rounded-full">
+                <Download className="h-5 w-5" />
+              </Button>
             </Tooltip>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -337,6 +369,10 @@ const Main = ({ params, documentInfo, updateDocument, documents, handleCreateDoc
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
+            <Button onClick={toggleWhiteboardMode} variant="outline" className="flex items-center bg-gray-700 text-white hover:bg-gray-600 hover:text-blue">
+              <Columns className="mr-2 h-4 w-4" />
+              {isWhiteboardMode ? 'Switch to Document' : 'Switch to Whiteboard'}
+            </Button>
           </div>
         </motion.div>
       </div>
@@ -347,12 +383,26 @@ const Main = ({ params, documentInfo, updateDocument, documents, handleCreateDoc
         className="flex-grow overflow-auto"
       >
         <div className="max-w-4xl mx-auto my-8 p-8 bg-gray-800 shadow-lg rounded-lg">
-          <DocumentContent
-            params={params}
-            documentInfo={documentInfo}
-            user={user}
-            updateDocument={handleUpdateDocument}
-          />
+          {isLoading ? (
+            <div className="flex justify-center items-center h-64">
+              <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-blue-500"></div>
+            </div>
+          ) : isWhiteboardMode ? (
+            <div className="whiteboard-container" ref={whiteboardRef}>
+              <Whiteboard
+                documentId={params?.documentid}
+                data={whiteboardData}
+                onUpdate={(newData) => updateWhiteboardData(params?.documentid, newData)}
+              />
+            </div>
+          ) : (
+            <DocumentContent
+              params={params}
+              documentInfo={documentInfo}
+              user={user}
+              updateDocument={(key, value) => updateDocument(params?.documentid, key, value)}
+            />
+          )}
         </div>
       </motion.div>
     </motion.div>

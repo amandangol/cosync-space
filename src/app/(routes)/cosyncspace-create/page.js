@@ -9,14 +9,14 @@ import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import CoverModal from '@/components/CoverModal';
+import UpdateCoverPhoto from '@/components/UpdateCoverPhoto';
 import { EmojiSelector } from '@/components/EmojiSelector';
 import Header from '@components/common/Header';
 import Footer from '@components/common/Footer';
 
 const SetupWorkspace = () => {
   const [loading, setLoading] = useState(false);
-  const [image, setImage] = useState('/images/default-cover.jpg');
+  const [image, setImage] = useState('/images/default-cover.png');
   const [workspaceName, setWorkspaceName] = useState('');
   const [emojiIcon, setEmojiIcon] = useState(null);
   const [error, setError] = useState(null);
@@ -84,14 +84,14 @@ const SetupWorkspace = () => {
           transition={{ duration: 0.5 }}
           className="rounded-lg bg-gray-800 shadow-lg p-8"
         >
-          <CoverModal setNewCover={handleImageChange}>
+          <UpdateCoverPhoto setNewCover={handleImageChange}>
             <div className="relative mb-6 cursor-pointer">
               <img src={image} alt="Workspace cover" className="h-48 w-full rounded-lg object-cover transition-opacity duration-300 hover:opacity-80" />
               <p className="absolute inset-0 flex items-center justify-center bg-black/60 text-lg font-semibold text-white opacity-0 transition-opacity duration-300 hover:opacity-100">
                 Change Cover
               </p>
             </div>
-          </CoverModal>
+          </UpdateCoverPhoto>
           <h2 className="text-3xl font-extrabold text-white mb-4">
             Create a New Workspace
           </h2>

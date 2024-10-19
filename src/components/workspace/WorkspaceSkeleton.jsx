@@ -49,6 +49,10 @@ const WorkspaceSkeleton = () => {
           </div>
         </div> */}
       </div>
+        {/* Loading Overlay */}
+        <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center">
+        <Loader className="w-12 h-12 text-blue-500 animate-spin" />
+      </div>
 
       {/* Comment Section Skeleton */}
       <div className="w-80 bg-gray-800 p-4 border-l border-gray-700 hidden md:block">
@@ -60,10 +64,7 @@ const WorkspaceSkeleton = () => {
         </div>
       </div>
 
-      {/* Loading Overlay */}
-      <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center">
-        <Loader className="w-12 h-12 text-blue-500 animate-spin" />
-      </div>
+    
     </div>
   );
 };

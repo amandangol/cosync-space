@@ -37,7 +37,7 @@ function GenerateAITemplate({ setGenerateAIOutput }) {
         <div>
             <Button 
                 variant="outline" 
-                className="flex gap-2 bg-gray-800 text-white hover:bg-gray-700" 
+                className="flex gap-2 bg-gray-800 text-white hover:bg-gray-700 hover:text-white" 
                 onClick={() => setOpen(true)}
             >
                 <LayoutGrid className='h-4 w-4' />
@@ -58,7 +58,7 @@ function GenerateAITemplate({ setGenerateAIOutput }) {
                                 <Button 
                                     variant="ghost" 
                                     onClick={() => setOpen(false)}
-                                    className="text-gray-300 hover:bg-gray-800"
+                                    className="text-gray-300 hover:bg-gray-800 hover:text-gray-300 "
                                 >
                                     Cancel
                                 </Button>

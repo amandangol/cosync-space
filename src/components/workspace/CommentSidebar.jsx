@@ -6,7 +6,7 @@ import { MessageCircle, X } from 'lucide-react';
 import { getMentionSuggestions, getUsersFromFirestore } from '@/lib/firebaseUserUtils';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const CommentSection = ({ currentUser }) => {
+const CommentSidebar = ({ currentUser }) => {
   const [openComment, setOpenComment] = useState(false);
   const { threads } = useThreads();
   const { user } = useUser();
@@ -55,8 +55,23 @@ const CommentSection = ({ currentUser }) => {
     console.log('Rendering username for userId:', userId);
     console.log('Current users state:', users);
     const user = users[userId];
-    return user ? user.name : userId.split('@')[0];
+    return user ? user.name : userId;
   };
+
+  const renderUser = useCallback((userId) => {
+    console.log('Rendering user for userId:', userId);
+    const user = users[userId];
+    return (
+      <div className="flex items-center">
+        <img 
+          src={user?.avatar || '/default-avatar.png'} 
+          alt={renderUsername(userId)} 
+          className="w-8 h-8 rounded-full mr-2"
+        />
+        <span className="text-gray-300">{renderUsername(userId)}</span>
+      </div>
+    );
+  }, [users]);
 
   return (
     <>
@@ -102,20 +117,7 @@ const CommentSection = ({ currentUser }) => {
                 <Thread 
                   key={thread.id} 
                   thread={thread}
-                  renderUser={(userId) => {
-                    console.log('Rendering user for userId:', userId);
-                    const user = users[userId];
-                    return (
-                      <div className="flex items-center">
-                        <img 
-                          src={user?.avatar || '/default-avatar.png'} 
-                          alt={renderUsername(userId)} 
-                          className="w-8 h-8 rounded-full mr-2"
-                        />
-                        <span className="text-gray-300">{renderUsername(userId)}</span>
-                      </div>
-                    );
-                  }}
+                  renderUser={renderUser}
                 />
               ))}
             </motion.div>
@@ -154,4 +156,4 @@ const CommentSection = ({ currentUser }) => {
   );
 };
 
-export default CommentSection;
+export default CommentSidebar;

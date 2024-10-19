@@ -10,7 +10,6 @@ export const getUsersFromFirestore = async (userIds) => {
   }
 
   const usersQuery = query(collection(db, 'LoopUsers'), where('email', 'in', userIds));
-
   const snapshot = await getDocs(usersQuery);
 
   const users = snapshot.docs.map(doc => {

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import Image from 'next/image';
-import ImageCover from '@/assets/ImageCover';
+import ImageCover from '@/assets/ImageCover'; 
 import { DialogClose } from '@radix-ui/react-dialog';
 import { Button } from '@/components/ui/button';
 import {
@@ -13,7 +13,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 
-function CoverModal({ children, setNewCover }) {
+function UpdateCoverPhoto({ children, setNewCover }) {
   const [selectedCover, setSelectedCover] = useState(null);
   const [customImage, setCustomImage] = useState(null);
 
@@ -39,27 +39,42 @@ function CoverModal({ children, setNewCover }) {
       <DialogContent className="bg-gray-800 text-white border-gray-700">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold">Update Cover</DialogTitle>
+          <DialogDescription>Select a cover image from below or upload a custom one.</DialogDescription>
         </DialogHeader>
         <div className="grid grid-cols-3 gap-4">
           {ImageCover.map((cover, index) => (
             <div
               key={index}
-              onClick={() => handleSelectCover(cover?.imageUrl)}
+              onClick={() => handleSelectCover(cover.imageUrl)}
               className={`${
-                selectedCover === cover?.imageUrl && 'border-2 border-blue-600'
+                selectedCover === cover.imageUrl ? 'border-2 border-blue-600' : ''
               } cursor-pointer rounded-md p-1 bg-gray-700`}
             >
-              <Image src={cover?.imageUrl} alt="cover" width={100} height={100} className="rounded-md" />
+              <Image
+                src={cover.imageUrl}
+                alt={`Cover ${index + 1}`}
+                width={100}
+                height={100}
+                className="rounded-md"
+                quality={100} 
+              />
             </div>
           ))}
           {customImage && (
             <div
               onClick={() => handleSelectCover(customImage)}
               className={`${
-                selectedCover === customImage && 'border-2 border-blue-600'
+                selectedCover === customImage ? 'border-2 border-blue-600' : ''
               } cursor-pointer rounded-md p-1 bg-gray-700`}
             >
-              <Image src={customImage} alt="custom cover" width={100} height={100} className="rounded-md" />
+              <Image
+                src={customImage}
+                alt="Custom Cover"
+                width={100}
+                height={100}
+                className="rounded-md"
+                quality={100} // Set quality if needed
+              />
             </div>
           )}
         </div>
@@ -96,4 +111,4 @@ function CoverModal({ children, setNewCover }) {
   );
 }
 
-export default CoverModal;
+export default UpdateCoverPhoto;
