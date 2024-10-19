@@ -1,105 +1,93 @@
 # CoSyncSpace
 
-CoSyncSpace is a cutting-edge collaborative workspace platform designed to streamline your team's workflow and boost productivity. With its intuitive interface and powerful features, CoSyncSpace helps teams work together more effectively in real-time.
+CoSyncSpace is a collaborative workspace platform that transforms team productivity through real-time collaboration, secure document management, and AI-powered content generation. Its intuitive design helps teams work efficiently, switching seamlessly between document editing and whiteboard modes for flexible project management.
 
-[Demo URL]
+[Demo URL]  
+[Video Demo](https://demo-video-link)
 
 ## Key Features
 
-- **User Authentication**: Secure sign-up and sign-in process using Clerk, ensuring your data remains protected.
-- **Real-Time Collaboration**: Work together with your team in real-time. Changes made by one user are instantly reflected for others.
-- **Document Creation and Editing**: Create and edit documents with a variety of content blocks including text, tables, lists, code snippets, and more.
-- **AI-Powered Document Generation**: Generate document templates and content using advanced AI, streamlining your workflow and boosting productivity.
-- **Versatile Workspaces**: Switch between document editing and whiteboard mode for flexible project management and ideation.
-- **Secure Document and Whiteboard Handling**: Create, edit, and organize documents and whiteboard with ease. Download in various formats and share securely.
-- **Customizable Workspace**: Tailor the interface and workflow to suit your team's needs with customizable views and layouts.
-- **Rich Text Editing**: Use a variety of tools for creating and formatting content, including checklists, headers, paragraphs, code blocks, tables, and more.
-- **Commenting System**: Discuss and provide feedback directly within documents using a built-in comment section.
-- **Cover Image Customization**: Personalize your documents and workspaces with custom cover images.
-- **Emoji Reactions**: Add emoji icons to documents for quick expression and categorization.
-- **Responsive Design**: Enjoy a seamless experience across desktop and mobile devices with a responsive layout.
-- **Dark Mode Support**: Work comfortably in low-light environments with dark mode.
+- **User Authentication**: Secure login through Clerk ensures user data protection.
+- **Real-Time Collaboration**: Instant updates for all users as documents are edited.
+- **Document Creation and Editing**: Create content-rich documents with diverse blocks like text, tables, lists, and code snippets.
+- **AI-Powered Document Generation**: Leverage AI to generate templates and streamline workflows.
+- **Versatile Workspaces**: Switch between editing documents and whiteboard mode for flexible project planning.
+- **Secure Sharing**: Share documents securely, manage access, and collaborate effortlessly.
+- **Customizable Interface**: Personalize layouts to match your team's needs.
+- **Responsive Design & Dark Mode**: Seamless experience across devices with light and dark themes.
 
 ## Tech Stack
 
-### Frontend
+**Frontend:**
 
-- [Next.js](https://nextjs.org/)
-- [React](https://react.dev/)
-- [Tailwind CSS](https://tailwindcss.com/)
-- [shadcn/ui](https://ui.shadcn.com/)
-- [Clerk](https://clerk.com/) for authentication and user management
-- [Framer Motion](https://www.framer.com/motion/) for animations
+- Next.js, React, Tailwind CSS
+- Clerk for user authentication
+- shadcn/ui and Framer Motion for design and animations
 
-### Backend
+**Backend:**
 
-- [Firebase](https://firebase.google.com/) for real-time data synchronization and storage
+- Firebase for real-time data and storage
 
-### Editor
+**Editing & Real-Time Collaboration:**
 
-- [Editor.js](https://editorjs.io/) for creating rich-text content with customizable blocks
-
-### Real-Time Collaboration
-
-- Powered by [Liveblocks](https://liveblocks.io/) to enable live editing and collaboration features
+- Editor.js for content creation
+- Liveblocks for live editing features
 
 ## Getting Started
 
 ### Prerequisites
 
-- Node.js (v14 or later)
-- npm or yarn
-- Firebase account
-- Clerk account
+- Node.js (v14+), npm or yarn
+- Clerk, Liveblocks and Firebase accounts
 
 ### Installation
 
-1. Clone the repository:
-
+1. **Clone the repository:**
    ```bash
    git clone https://github.com/your-username/cosyncspace.git
    cd cosyncspace
    ```
-
-2. Install dependencies:
-
+2. **Install dependencies:**
    ```bash
    npm install
    ```
-
-3. Set up environment variables:
-   Create a `.env` file in the root directory and add the following:
-
+3. **Configure environment variables:**  
+    Create a `.env` file and add:
+   ```plaintext
+   NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=
+   CLERK_SECRET_KEY=
+   NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
+   NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up
+   NEXT_PUBLIC_CLERK_SIGN_IN_FORCE_REDIRECT_URL=/cosyncspace-dashboard
+   NEXT_PUBLIC_CLERK_SIGN_UP_FORCE_REDIRECT_URL=/cosyncspace-dashboard
+   CLERK_SIGN_IN_FALLBACK_REDIRECT_URL=/
+   CLERK_SIGN_IN_FALLBACK_REDIRECT_URL=/
+   NEXT_PUBLIC_FIREBASE_API_KEY=
+   NEXT_PUBLIC_LIVEBLOCK_PRIMARY_KEY=
+   LIVEBLOCKS_SK=
+   NEXT_PUBLIC_GEMINI_API_KEY=
+   NEXT_PUBLIC_MAX_DOCUMENTS_COUNT=7
    ```
-   NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key
-   CLERK_SECRET_KEY=your_clerk_secret_key
-   NEXT_PUBLIC_FIREBASE_API_KEY=your_firebase_api_key
-   NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_firebase_auth_domain
-   NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_firebase_project_id
-   NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_firebase_storage_bucket
-   NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_firebase_messaging_sender_id
-   NEXT_PUBLIC_FIREBASE_APP_ID=your_firebase_app_id
-   ```
+4. **Start the development server:**
 
-4. Start the development server:
+```bash
+npm run dev
+```
 
-   ```bash
-   npm run dev
-   ```
-
-5. Visit `http://localhost:3000` in your browser to see the application.
+5. **Access the application:**  
+   Visit `http://localhost:3000` in your browser.
 
 ## Usage
 
-1. Sign up for a new account or sign in if you already have one.
-2. Create a new workspace by clicking the "Create New Workspace" button.
-3. Customize your workspace with a name, cover image, and emoji.
-4. Create new documents within your workspace or use the AI-powered document generation feature to get started quickly.
-5. Switch between document editing and whiteboard mode as needed for your project.
-6. Collaborate with your team in real-time, using the commenting system for discussions.
-7. Use the secure sharing features to invite others to your workspace or specific documents.
+1. **Sign up or log in** with your credentials.
+2. **Create a workspace** and customize it with a name, cover image, and emoji.
+3. **Generate documents or use AI** to quickly set up content.
+4. **Switch modes** between document and whiteboard as needed.
+5. **Collaborate in real-time** using comments for discussions.
+6. **Securely share and manage documents** across your team.
 
 ## Snapshots
+
  <img src="https://github.com/user-attachments/assets/47a8abb4-af5c-4174-9418-fba6512bad84" alt="landing" height="300">
  <img src="https://github.com/user-attachments/assets/84e4bd80-daf2-4297-8bd9-a2affb033c63" alt="landing" height="300">
  <img src="https://github.com/user-attachments/assets/c8171ee8-c1ae-4292-8c3a-e6e846fc6b81" alt="signup" height="300">
