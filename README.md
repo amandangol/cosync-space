@@ -1,4 +1,4 @@
-![image](https://github.com/user-attachments/assets/66c319e9-f36a-4f7f-b7a0-b64fe7d985ca)# CoSyncSpace
+# CoSyncSpace
 
 CoSyncSpace is a cutting-edge collaborative workspace platform designed to streamline your team's workflow and boost productivity. With its intuitive interface and powerful features, CoSyncSpace helps teams work together more effectively in real-time.
 
@@ -26,6 +26,7 @@ CoSyncSpace is a cutting-edge collaborative workspace platform designed to strea
  <img src="https://github.com/user-attachments/assets/1d06275c-a900-4be5-8e0f-ddc84a8c3026" alt="generate AI template" height="300">
  <img src="https://github.com/user-attachments/assets/a9ae9a0f-2f97-4a63-a385-41f893d17523" alt="Document Mode" height="300">
  <img src="https://github.com/user-attachments/assets/930847c4-95fb-4b2a-b278-56d3fcf92fc6" alt="Whiteboard Mode" height="300">
+  <img src="https://github.com/user-attachments/assets/66c319e9-f36a-4f7f-b7a0-b64fe7d985ca" alt="Whiteboard Full screen " height="300">
  <img src="https://github.com/user-attachments/assets/5a7b174d-c4cf-4bbe-be9a-e4463cbeeeff" alt="Manage Org" height="300">
  <img src="https://github.com/user-attachments/assets/e08028a1-d1b0-4e80-b22c-8f0c14416f89" alt="Update profile" height="300">
 
