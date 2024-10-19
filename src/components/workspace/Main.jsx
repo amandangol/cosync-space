@@ -56,6 +56,12 @@ const Main = ({ params, documents, handleCreateDocument, handleDeleteDocument, u
     };
   }, [params?.documentid]);
 
+  const handleUpdateEmoji = (newEmoji) => {
+    if (params?.documentid) {
+      updateDocument(params.documentid, 'emoji', newEmoji);
+    }
+  };
+
   const handleRename = () => {
     setIsEditing(true);
   };
@@ -254,7 +260,7 @@ const Main = ({ params, documents, handleCreateDocument, handleDeleteDocument, u
                       onClick={() =>
                         router.push(`/workspace/${params?.workspaceid}/${doc?.id}`)
                       }
-                    >
+                    > 
                       <div className="flex items-center justify-between w-full mb-4">
                         <span className="text-3xl">{doc.emoji || "📄"}</span>
                         <FileText className="text-gray-400" size={20} />
@@ -298,11 +304,9 @@ const Main = ({ params, documents, handleCreateDocument, handleDeleteDocument, u
             objectFit="cover"
           />
           <div className="absolute inset-0 bg-black bg-opacity-30 flex items-end justify-between p-4">
-            <h1 className="text-3xl font-bold text-white drop-shadow-lg">
-              {documentInfo?.name || "Untitled Document"}
-            </h1>
+           
             <UpdateCoverPhoto setNewCover={handleUpdateCoverPhoto}>
-              <Button variant="ghost" className="bg-gray-800/80 hover:bg-gray-700 text-white rounded-md">
+              <Button variant="ghost" className="bg-gray-800/80 hover:bg-gray-700 text-white rounded-md hover:text-white">
                 Change Cover
               </Button>
             </UpdateCoverPhoto>
@@ -314,11 +318,12 @@ const Main = ({ params, documents, handleCreateDocument, handleDeleteDocument, u
           transition={{ delay: 0.3 }}
           className="flex items-center justify-between px-6 py-2 border-b border-gray-700"
         >
-          <div className="flex items-center space-x-4">
-            <EmojiSelector
-              setEmojiIcon={emoji => updateDocument('emoji', emoji)}
-              emojiIcon={documentInfo?.emoji || "📄"}
-            />
+         <div className="flex items-center space-x-4">
+          <EmojiSelector
+            setEmojiIcon={handleUpdateEmoji}
+            emojiIcon={documentInfo?.emoji || "📄"}
+          />
+
             <AnimatePresence>
               {isEditing ? (
                 <motion.input

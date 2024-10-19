@@ -10,7 +10,9 @@ import {
   Circle as CircleIcon, 
   Type, 
   Eraser, 
-  Trash2 
+  Trash2,
+  Maximize,
+  Minimize
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { 
@@ -44,6 +46,7 @@ const Whiteboard = ({ params }) => {
   const [tool, setTool] = useState('pencil');
   const [color, setColor] = useState('#000000');
   const [textInput, setTextInput] = useState('');
+  const [isFullScreen, setIsFullScreen] = useState(false);
 
   const handleMouseDown = useCallback((e) => {
     setIsDrawing(true);
@@ -116,25 +119,41 @@ const Whiteboard = ({ params }) => {
       if (e.key === 'c' && e.ctrlKey) {
         setShapes([]);
         broadcast({ type: 'CLEAR_WHITEBOARD' });
+      } else if (e.key === 'Escape' && isFullScreen) {
+        setIsFullScreen(false);
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [broadcast]);
+  }, [broadcast, isFullScreen]);
+
+  const toggleFullScreen = () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen();
+      setIsFullScreen(true);
+    } else {
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+        setIsFullScreen(false);
+      }
+    }
+  };
 
   return (
     <motion.div 
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className="w-full h-full bg-white relative"
+      className={`w-full h-full bg-white relative ${isFullScreen ? 'fixed inset-0 z-50' : ''}`}
     >
       <div className="absolute top-4 left-4 z-10 flex space-x-2">
         <ToggleGroup type="single" value={tool} onValueChange={(value) => value && setTool(value)}>
           {tools.map((item) => (
             <ToggleGroupItem key={item.name} value={item.name} aria-label={item.name}>
-              <item.icon className="h-4 w-4" />
+              <item.icon 
+                className="h-4 w-4 text-gray-800 hover:text-black transition-colors duration-300"
+              />
             </ToggleGroupItem>
           ))}
         </ToggleGroup>
@@ -164,6 +183,9 @@ const Whiteboard = ({ params }) => {
           broadcast({ type: 'CLEAR_WHITEBOARD' });
         }}>
           <Trash2 className="h-4 w-4" />
+        </Button>
+        <Button variant="outline" size="icon" onClick={toggleFullScreen}>
+          {isFullScreen ? <Minimize className="h-4 w-4 text-gray-800 " /> : <Maximize className="h-4 w-4 text-gray-800" />}
         </Button>
       </div>
       <Stage

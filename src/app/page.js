@@ -4,7 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Zap, Layers, Shield, ChevronDown } from 'lucide-react';
+import { ArrowRight, Zap, Layers, Shield, ChevronDown, Cpu } from 'lucide-react';
 import Logo from '@components/common/Logo';
 import Footer from '@/components/common/Footer';
 
@@ -100,17 +100,22 @@ const Features = () => (
         <FeatureCard
           icon={<Zap className="h-12 w-12 text-indigo-400" />}
           title="Real-time Collaboration"
-          description="Work together seamlessly with instant updates and live editing."
+          description="Work together seamlessly with instant updates, live editing, and integrated commenting system."
         />
         <FeatureCard
           icon={<Layers className="h-12 w-12 text-purple-400" />}
-          title="Project Management"
-          description="Organize tasks, set deadlines, and track progress effortlessly."
+          title="Versatile Workspaces"
+          description="Switch between document editing and whiteboard mode for flexible project management and ideation."
         />
-        <FeatureCard
+        {/* <FeatureCard
           icon={<Shield className="h-12 w-12 text-indigo-400" />}
-          title="Secure File Sharing"
-          description="Share and store files with enterprise-grade encryption and security."
+          title="Secure Document Handling"
+          description="Create, edit, and organize documents with ease. Download in various formats and share securely."
+        /> */}
+        <FeatureCard
+          icon={<Cpu className="h-12 w-12 text-green-400" />}
+          title="AI-Powered Document Generation"
+          description="Generate document templates and content using advanced AI, streamlining your workflow and boosting productivity."
         />
       </div>
     </div>

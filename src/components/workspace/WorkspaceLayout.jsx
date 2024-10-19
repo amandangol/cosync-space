@@ -103,7 +103,7 @@ const WorkspaceLayout = ({ params }) => {
                     initial={{ x: -300 }}
                     animate={{ x: 0 }}
                     exit={{ x: -300 }}
-                    transition={{ duration: 0.3 }}
+                    transition={{ duration: 0.05 }}
                     className="w-64 border-r border-gray-700 bg-gray-800"
                   >
                     <Sidebar
@@ -127,7 +127,7 @@ const WorkspaceLayout = ({ params }) => {
                     </Button>
                     <h1 className="text-2xl font-bold text-white">Workspace</h1>
                   </div>
-                  <Button onClick={toggleWhiteboardMode} variant="outline" className="flex items-center bg-gray-700 text-white hover:bg-gray-600">
+                  {/* <Button onClick={toggleWhiteboardMode} variant="outline" className="flex items-center bg-gray-700 text-white hover:bg-gray-600">
                     {isWhiteboardMode ? (
                       <>
                         <X className="mr-2 h-4 w-4" />
@@ -139,7 +139,7 @@ const WorkspaceLayout = ({ params }) => {
                         Enter Whiteboard
                       </>
                     )}
-                  </Button>
+                  </Button> */}
                 </header>
                 <main className="flex-1 flex overflow-hidden relative">
                   <div className="flex-1 overflow-auto">

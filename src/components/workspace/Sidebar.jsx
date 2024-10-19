@@ -56,19 +56,26 @@ const Sidebar = ({ documents = [], loading, params, handleCreateDocument, handle
     setSearchTerm(e.target.value);
   };
 
+  const sidebarVariants = {
+    open: { width: 256, transition: { type: "spring", stiffness: 300, damping: 30 } },
+    closed: { width: 64, transition: { type: "spring", stiffness: 300, damping: 30 } },
+  };
+
+  const contentVariants = {
+    open: { opacity: 1, x: 0, transition: { delay: 0.2, duration: 0.3 } },
+    closed: { opacity: 0, x: -20, transition: { duration: 0.3 } },
+  };
+
   return (
     <motion.aside
-      initial={{ width: isCollapsed ? 64 : 256, opacity: 0 }}
-      animate={{ width: isCollapsed ? 64 : 256, opacity: 1 }}
-      exit={{ width: 0, opacity: 0 }}
-      transition={{ duration: 0.3 }}
-      className="bg-gray-900 text-gray-300 h-screen flex flex-col border-r border-gray-700"
+      initial={isCollapsed ? "closed" : "open"}
+      animate={isCollapsed ? "closed" : "open"}
+      variants={sidebarVariants}
+      className="bg-gray-900 text-gray-300 h-screen flex flex-col border-r border-gray-700 overflow-hidden"
     >
       <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.2 }}
-        className={`flex items-center justify-between border-b border-gray-700 p-4 ${isCollapsed ? 'flex-col' : ''}`}
+        variants={contentVariants}
+        className="flex items-center justify-between border-b border-gray-700 p-4"
       >
         {!isCollapsed && <h1 className="text-xl font-bold truncate text-gray-100">{workspaceName}</h1>}
         <Tooltip content={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}>
@@ -77,13 +84,14 @@ const Sidebar = ({ documents = [], loading, params, handleCreateDocument, handle
           </Button>
         </Tooltip>
       </motion.div>
-      <AnimatePresence>
+      <AnimatePresence mode="wait">
         {isCollapsed ? (
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
+            key="collapsed"
+            variants={contentVariants}
+            initial="closed"
+            animate="open"
+            exit="closed"
             className="flex flex-col items-center py-4 space-y-4"
           >
             <Tooltip content="Create new document">
@@ -108,10 +116,11 @@ const Sidebar = ({ documents = [], loading, params, handleCreateDocument, handle
           </motion.div>
         ) : (
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
+            key="expanded"
+            variants={contentVariants}
+            initial="closed"
+            animate="open"
+            exit="closed"
             className="flex flex-col h-full overflow-hidden p-4"
           >
             <div className="relative mb-4">
