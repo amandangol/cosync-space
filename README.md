@@ -20,7 +20,7 @@ CoSyncSpace is a cutting-edge collaborative workspace platform designed to strea
 - **Responsive Design**: Enjoy a seamless experience across desktop and mobile devices with a responsive layout.
 - **Dark Mode Support**: Work comfortably in low-light environments with dark mode.
 
- <img src="https://github.com/user-attachments/assets/47a8abb4-af5c-4174-9418-fba6512bad84" alt="landing" height="300"> <img src="https://github.com/user-attachments/assets/84e4bd80-daf2-4297-8bd9-a2affb033c63" alt="landing" height="300"> <img src="https://github.com/user-attachments/assets/c8171ee8-c1ae-4292-8c3a-e6e846fc6b81" alt="signup" height="300"> <(https://github.com/user-attachments/assets/185aa152-1512-4978-b8b4-4c975902efb8" alt="dashboard" height="300"> <img src="https://github.com/user-attachments/assets/72da0766-85de-4279-8284-945eda2354ef" alt="dashboard2" height="300"> <img src="https://github.com/user-attachments/assets/5d9d3751-92ed-4ad2-8912-bee0a4c732e1" alt="create" height="300"> 
+ <img src="https://github.com/user-attachments/assets/47a8abb4-af5c-4174-9418-fba6512bad84" alt="landing" height="300"> <img src="https://github.com/user-attachments/assets/84e4bd80-daf2-4297-8bd9-a2affb033c63" alt="landing" height="300"> <img src="https://github.com/user-attachments/assets/c8171ee8-c1ae-4292-8c3a-e6e846fc6b81" alt="signup" height="300"> <img src = "https://github.com/user-attachments/assets/185aa152-1512-4978-b8b4-4c975902efb8" alt="dashboard" height="300"> <img src="https://github.com/user-attachments/assets/72da0766-85de-4279-8284-945eda2354ef" alt="dashboard2" height="300"> <img src="https://github.com/user-attachments/assets/5d9d3751-92ed-4ad2-8912-bee0a4c732e1" alt="create" height="300"> 
 
 ## Tech Stack
 
