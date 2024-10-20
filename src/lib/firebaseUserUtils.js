@@ -9,7 +9,7 @@ export const getUsersFromFirestore = async (userIds) => {
     return [];
   }
 
-  const usersQuery = query(collection(db, 'LoopUsers'), where('email', 'in', userIds));
+  const usersQuery = query(collection(db, 'users'), where('email', 'in', userIds));
   const snapshot = await getDocs(usersQuery);
 
   const users = snapshot.docs.map(doc => {
@@ -28,7 +28,7 @@ export const getUsersFromFirestore = async (userIds) => {
 
 export const getMentionSuggestions = async (text) => {
   console.log('getMentionSuggestions called with text:', text);
-  const q = query(collection(db, 'LoopUsers'), where('email', '!=', null));
+  const q = query(collection(db, 'users'), where('email', '!=', null));
   const querySnapshot = await getDocs(q);
   let userList = querySnapshot.docs.map(doc => {
     const userData = doc.data();
@@ -56,7 +56,7 @@ export const getCurrentUser = async (userEmail) => {
     return null;
   }
   
-  const q = query(collection(db, 'LoopUsers'), where('email', '==', userEmail));
+  const q = query(collection(db, 'users'), where('email', '==', userEmail));
   const querySnapshot = await getDocs(q);
   
   if (querySnapshot.empty) {
