@@ -77,7 +77,6 @@ export const updateWhiteboardData = async (documentId, newData) => {
       console.log('Whiteboard document updated');
     }
     
-    // Uncomment the following line if you want to show a success message for each update
     // toast.success('Whiteboard updated successfully');
   } catch (error) {
     console.error('Error updating whiteboard:', error);

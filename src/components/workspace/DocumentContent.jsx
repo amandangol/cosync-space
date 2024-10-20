@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { useUser } from '@clerk/nextjs';
 import EditorJS from '@editorjs/editorjs';
 import { doc, onSnapshot, updateDoc } from 'firebase/firestore';
-import { db } from '@/config/firebaseConfig'; // Adjust according to your Firebase config
+import { db } from '@/config/firebaseConfig'; 
 import Checklist from '@editorjs/checklist';
 import CodeTool from '@editorjs/code';
 import Delimiter from '@editorjs/delimiter';
@@ -11,10 +11,10 @@ import List from '@editorjs/list';
 import Paragraph from '@editorjs/paragraph';
 import Table from '@editorjs/table';
 import SimpleImage from 'simple-image-editorjs';
-import { Button } from '@/components/ui/button'; // Adjust according to your button component
+import { Button } from '@/components/ui/button'; 
 import { Save, Clock } from 'lucide-react';
 import { motion } from 'framer-motion';
-import GenerateAITemplate from './GenerateAITemplate'; // Adjust according to your AI generation component
+import GenerateAITemplate from './GenerateAITemplate'; 
 
 const DocumentContent = ({ params, updateDocument }) => {
   const [isEditorReady, setIsEditorReady] = useState(false);

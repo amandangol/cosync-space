@@ -164,7 +164,6 @@ const Main = ({ params, documents, handleCreateDocument, handleDeleteDocument, u
           toast.error('No whiteboard content found');
         }
       } else {
-        // Download document content (existing logic)
         const content = documentInfo.content;
         if (!content) {
           throw new Error('No document content found');

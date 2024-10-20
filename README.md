@@ -1,4 +1,5 @@
 ## Ocotober Hackathon Challenge
+
 # CoSyncSpace
 
 CoSyncSpace is a collaborative workspace platform that transforms team productivity through real-time collaboration, secure document management, and AI-powered content generation. Its intuitive design helps teams work efficiently, switching seamlessly between document editing and whiteboard modes for flexible project management.
@@ -85,7 +86,16 @@ npm run dev
 3. **Generate documents or use AI** to quickly set up content.
 4. **Switch modes** between document and whiteboard as needed.
 5. **Collaborate in real-time** using comments for discussions.
-6. **Securely share and manage documents** across your team.
+6. **Invite organization members**
+   - Navigate to the "Manage Organization" section.
+   - Click on "Invite Members" and enter email addresses of team members.
+   - Set appropriate permissions for each invited member.
+7. **Share documents via email links**
+   - Open the document you want to share.
+   - Click on the "Share" button.
+   - Choose "Get shareable link" and set permissions (view/edit).
+   - Copy the generated link and send it via email to collaborators.
+8. **Securely share and manage documents** across your team.
 
 ## Snapshots
 
