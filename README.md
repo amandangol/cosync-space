@@ -4,7 +4,7 @@
 CoSyncSpace is a collaborative workspace platform that transforms team productivity through real-time collaboration, secure document management, and AI-powered content generation. Its intuitive design helps teams work efficiently, switching seamlessly between document editing and whiteboard modes for flexible project management.
 
 [Demo URL]  
-[Video Demo](https://demo-video-link)
+->>> [CoSync-Space Video Demo](https://youtu.be/44uL1vPPb5E) <<<-
 
 ## Key Features
 
