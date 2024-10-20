@@ -14,7 +14,7 @@ CoSyncSpace is a collaborative workspace platform that transforms team productiv
 - **Versatile Workspaces**: Switch between editing documents and whiteboard mode for flexible project planning.
 - **Secure Sharing**: Share documents securely, manage access, and collaborate effortlessly.
 - **Customizable Interface**: Personalize layouts to match your team's needs.
-- **Responsive Design & Dark Mode**: Seamless experience across devices with light and dark themes.
+- **Responsive Design & Dark Mode**: Seamless experience across devices with dark themes.
 
 ## Tech Stack
 

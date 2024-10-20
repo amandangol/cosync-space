@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import Image from 'next/image';
 import ImageCover from '@/assets/CoverImages'; 
 import { DialogClose } from '@radix-ui/react-dialog';
@@ -16,6 +16,7 @@ import {
 function UpdateCoverPhoto({ children, setNewCover }) {
   const [selectedCover, setSelectedCover] = useState(null);
   const [customImage, setCustomImage] = useState(null);
+  const closeDialogRef = useRef(null);
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
@@ -31,6 +32,11 @@ function UpdateCoverPhoto({ children, setNewCover }) {
 
   const handleSelectCover = (coverUrl) => {
     setSelectedCover(coverUrl);
+  };
+
+  const handleUpdate = () => {
+    setNewCover(selectedCover);
+    closeDialogRef.current?.click();
   };
 
   return (
@@ -73,7 +79,7 @@ function UpdateCoverPhoto({ children, setNewCover }) {
                 width={100}
                 height={100}
                 className="rounded-md"
-                quality={100} // Set quality if needed
+                quality={100} 
               />
             </div>
           )}
@@ -95,13 +101,13 @@ function UpdateCoverPhoto({ children, setNewCover }) {
         </div>
         <DialogFooter>
           <DialogClose asChild>
-            <Button variant="outline" className="bg-gray-700 text-white hover:bg-gray-600 border-gray-600">
+            <Button variant="outline" className="bg-gray-700 text-white hover:bg-gray-600 border-gray-600" ref={closeDialogRef}>
               Close
             </Button>
           </DialogClose>
           <Button
             className="bg-blue-600 text-white hover:bg-blue-700"
-            onClick={() => setNewCover(selectedCover)}
+            onClick={handleUpdate}
           >
             Update
           </Button>
