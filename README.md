@@ -4,8 +4,8 @@
 
 CoSyncSpace is a collaborative workspace platform that transforms team productivity through real-time collaboration, secure document management, and AI-powered content generation. Its intuitive design helps teams work efficiently, switching seamlessly between document editing and whiteboard modes for flexible project management.
 
-[Demo URL]  
-[Video Demo](https://demo-video-link)
+## Demo URL
+->>> [CoSync-Space Video Demo](https://youtu.be/44uL1vPPb5E) <<<-
 
 ## Key Features
 
@@ -18,6 +18,9 @@ CoSyncSpace is a collaborative workspace platform that transforms team productiv
 - **Customizable Interface**: Personalize layouts to match your team's needs.
 - **Responsive Design & Dark Mode**: Seamless experience across devices with dark themes.
 
+<img src="https://github.com/user-attachments/assets/47a8abb4-af5c-4174-9418-fba6512bad84" alt="landing" height="300"> <img src="https://github.com/user-attachments/assets/84e4bd80-daf2-4297-8bd9-a2affb033c63" alt="landing" height="300">
+ <img src="https://github.com/user-attachments/assets/c8171ee8-c1ae-4292-8c3a-e6e846fc6b81" alt="signup" height="300"> <img src="https://github.com/user-attachments/assets/72da0766-85de-4279-8284-945eda2354ef" alt="dashboard2" height="300">
+ 
 ## Tech Stack
 
 **Frontend:**
@@ -46,7 +49,7 @@ CoSyncSpace is a collaborative workspace platform that transforms team productiv
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/your-username/cosyncspace.git
+   git clone https://github.com/amandangol/cosync-space.git
    cd cosyncspace
    ```
 2. **Install dependencies:**
@@ -99,11 +102,8 @@ npm run dev
 
 ## Snapshots
 
- <img src="https://github.com/user-attachments/assets/47a8abb4-af5c-4174-9418-fba6512bad84" alt="landing" height="300">
- <img src="https://github.com/user-attachments/assets/84e4bd80-daf2-4297-8bd9-a2affb033c63" alt="landing" height="300">
- <img src="https://github.com/user-attachments/assets/c8171ee8-c1ae-4292-8c3a-e6e846fc6b81" alt="signup" height="300">
+
  <img src = "https://github.com/user-attachments/assets/185aa152-1512-4978-b8b4-4c975902efb8" alt="dashboard" height="300">
- <img src="https://github.com/user-attachments/assets/72da0766-85de-4279-8284-945eda2354ef" alt="dashboard2" height="300">
  <img src="https://github.com/user-attachments/assets/5d9d3751-92ed-4ad2-8912-bee0a4c732e1" alt="create" height="300">
  <img src="https://github.com/user-attachments/assets/aaad0e92-1125-4412-b41e-864c2a2a6f42" alt="No Workspace Found" height="300">
  <img src="https://github.com/user-attachments/assets/4fd9c2f8-788d-451a-b321-da6f4a9a9da8" alt="Welcome to workspace" height="300">
