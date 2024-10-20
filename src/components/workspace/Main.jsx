@@ -386,15 +386,15 @@ const Main = ({ params, documents, handleCreateDocument, handleDeleteDocument, u
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.4 }}
-        className="flex-grow overflow-auto"
+        className="flex-grow overflow-auto w-full"
       >
-        <div className="max-w-4xl mx-auto my-8 p-8 bg-gray-800 shadow-lg rounded-lg">
+        <div className="w-full">
           {isLoading ? (
             <div className="flex justify-center items-center h-64">
               <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-blue-500"></div>
             </div>
           ) : isWhiteboardMode ? (
-            <div className="whiteboard-container" ref={whiteboardRef}>
+            <div className="whiteboard-container w-full h-full" ref={whiteboardRef}>
               <Whiteboard
                 documentId={params?.documentid}
                 data={whiteboardData}
@@ -402,12 +402,14 @@ const Main = ({ params, documents, handleCreateDocument, handleDeleteDocument, u
               />
             </div>
           ) : (
-            <DocumentContent
-              params={params}
-              documentInfo={documentInfo}
-              user={user}
-              updateDocument={(key, value) => updateDocument(params?.documentid, key, value)}
-            />
+            <div className="document-content-container w-full px-4 sm:px-6 lg:px-8">
+              <DocumentContent
+                params={params}
+                documentInfo={documentInfo}
+                user={user}
+                updateDocument={(key, value) => updateDocument(params?.documentid, key, value)}
+              />
+            </div>
           )}
         </div>
       </motion.div>

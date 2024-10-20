@@ -11,7 +11,7 @@ import Whiteboard from '@components/workspace/Whiteboard';
 import { getUsersFromFirestore, getMentionSuggestions } from '@/lib/firebaseUserUtils';
 import WorkspaceSkeleton from '@components/workspace/WorkspaceSkeleton';
 import { Button } from '@/components/ui/button';
-import { Menu, PenTool, X, Loader } from 'lucide-react';
+import { Menu, MessageCircle, X, Loader } from 'lucide-react';
 
 import { getDocumentList, getDocument, handleCreateDocument, handleDeleteDocument, updateDocument } from '@/lib/firebaseDocumentUtils';
 import { getWhiteboardData, updateWhiteboardData } from '@/lib/firebaseWhiteboardUtils';
@@ -25,7 +25,7 @@ const WorkspaceLayout = ({ params }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [isChangingDocument, setIsChangingDocument] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const [isCommentSidebarOpen, setIsCommentSidebarOpen] = useState(true);
+  const [isCommentSidebarOpen, setIsCommentSidebarOpen] = useState(false);
   const { user } = useUser();
   const router = useRouter();
 
@@ -103,7 +103,7 @@ const WorkspaceLayout = ({ params }) => {
                     initial={{ x: -300 }}
                     animate={{ x: 0 }}
                     exit={{ x: -300 }}
-                    transition={{ duration: 0.05 }}
+                    transition={{ duration: 0.3 }}
                     className="w-64 border-r border-gray-700 bg-gray-800"
                   >
                     <Sidebar
@@ -123,23 +123,20 @@ const WorkspaceLayout = ({ params }) => {
                 <header className="bg-gray-800 shadow-sm p-4 flex justify-between items-center">
                   <div className="flex items-center">
                     <Button variant="ghost" size="icon" onClick={toggleSidebar} className="mr-2 text-gray-300 hover:bg-gray-700">
-                      <Menu className="h-6 w-6" />
+                      <Menu className="h-6 w-6 text-white" />
                     </Button>
                     <h1 className="text-2xl font-bold text-white">Workspace</h1>
                   </div>
-                  {/* <Button onClick={toggleWhiteboardMode} variant="outline" className="flex items-center bg-gray-700 text-white hover:bg-gray-600">
-                    {isWhiteboardMode ? (
-                      <>
-                        <X className="mr-2 h-4 w-4" />
-                        Exit Whiteboard 
-                      </>
-                    ) : (
-                      <>
-                        <PenTool className="mr-2 h-4 w-4" />
-                        Enter Whiteboard
-                      </>
-                    )}
-                  </Button> */}
+                  {params?.documentid && !isWhiteboardMode && (
+                    <Button
+                      variant="ghost"
+                      onClick={toggleCommentSidebar}
+                      className="text-gray-300 hover:bg-gray-700 hover:text-white flex items-center"
+                    >
+                      <MessageCircle className="h-5 w-5 mr-2 hover: text-blue-400" />
+                      <span>{isCommentSidebarOpen ? 'Hide Comments' : 'Show Comments'}</span>
+                    </Button>
+                  )}
                 </header>
                 <main className="flex-1 flex overflow-hidden relative">
                   <div className="flex-1 overflow-auto">
@@ -152,26 +149,20 @@ const WorkspaceLayout = ({ params }) => {
                         transition={{ duration: 0.2 }}
                         className="h-full w-full"
                       >
-                        {isWhiteboardMode ? (
-                          <Whiteboard
-                            documentId={params?.documentid}
-                            data={whiteboardData}
-                            onUpdate={handleWhiteboardUpdate}
-                          />
-                        ) : (
-                          <Main 
-                            params={params}
-                            documentInfo={documentInfo}
-                            updateDocument={(key, value) => updateDocument(params?.documentid, key, value)}
-                            documents={documents}
-                            handleCreateDocument={createDocument}
-                            handleDeleteDocument={deleteDocument}
-                            user={user}
-                            router={router}
-                            toggleSidebar={toggleSidebar}
-                            isCollapsed={isCollapsed}
-                          />
-                        )}
+                        <Main 
+                          params={params}
+                          documentInfo={documentInfo}
+                          updateDocument={(key, value) => updateDocument(params?.documentid, key, value)}
+                          documents={documents}
+                          handleCreateDocument={createDocument}
+                          handleDeleteDocument={deleteDocument}
+                          user={user}
+                          router={router}
+                          toggleSidebar={toggleSidebar}
+                          isCollapsed={isCollapsed}
+                          isWhiteboardMode={isWhiteboardMode}
+                          toggleWhiteboardMode={toggleWhiteboardMode}
+                        />
                       </motion.div>
                     </AnimatePresence>
                   </div>
@@ -187,6 +178,7 @@ const WorkspaceLayout = ({ params }) => {
                         <CommentSidebar 
                           currentUser={user}
                           getUsersFromFirestore={getUsersFromFirestore}
+                          toggleCommentSidebar={toggleCommentSidebar}
                         />
                       </motion.div>
                     )}

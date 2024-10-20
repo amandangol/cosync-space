@@ -116,14 +116,14 @@ const DocumentContent = ({ params, updateDocument }) => {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5 }}
-      className="flex flex-col h-full w-full overflow-hidden bg-white"
-      style={{ height: 'calc(100vh - 64px)' }} // Adjust 64px if your header height is different
+      className="flex flex-col h-full w-full overflow-hidden bg-white-800"
+      style={{ height: 'calc(100vh - 64px)' }} 
     >
       <motion.div 
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.2 }}
-        className="flex justify-between items-center p-4 border-b border-gray-200 bg-gray-50"
+        className="flex justify-between items-center p-4 border-b border-gray-700 bg-white-900"
       >
         <div className="flex items-center space-x-4">
           <Button 
@@ -138,7 +138,7 @@ const DocumentContent = ({ params, updateDocument }) => {
           </Button>
           <GenerateAITemplate setGenerateAIOutput={handleGenerateAIOutput} />
         </div>
-        <div className="flex items-center text-sm text-gray-500">
+        <div className="flex items-center text-sm text-gray-400">
           <Clock className="w-4 h-4 mr-2" />
           Last modified: {formatDate(lastModified)}
         </div>
@@ -151,7 +151,7 @@ const DocumentContent = ({ params, updateDocument }) => {
       >
         <div 
           id="editorjs" 
-          className="editor-wrapper p-8 text-gray-800 h-full w-full max-w-4xl mx-auto"
+          className="editor-wrapper p-8 text-black h-full w-full max-w-none"
         />
       </motion.div>
     </motion.div>

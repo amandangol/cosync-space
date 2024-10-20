@@ -3,7 +3,7 @@ import { useRouter } from 'next/navigation';
 import { useUser } from '@clerk/nextjs';
 import { useBroadcastEvent, useEventListener, useMyPresence } from '@liveblocks/react';
 import { motion } from 'framer-motion';
-import { Stage, Layer, Line, Circle, Rect, Text } from 'react-konva';
+import { Stage, Layer, Line, Circle, Rect, Text, Transformer } from 'react-konva';
 import { 
   Pencil, 
   Square, 
@@ -12,7 +12,8 @@ import {
   Eraser, 
   Trash2,
   Maximize,
-  Minimize
+  Minimize,
+  Move
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { 
@@ -38,6 +39,7 @@ const tools = [
   { icon: CircleIcon, name: 'circle' },
   { icon: Type, name: 'text' },
   { icon: Eraser, name: 'eraser' },
+  { icon: Move, name: 'move' },
 ];
 
 const colors = ['#000000', '#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#FF00FF', '#00FFFF'];
@@ -58,11 +60,20 @@ const Whiteboard = ({ params }) => {
   const [isFullScreen, setIsFullScreen] = useState(false);
   const stageRef = useRef(null);
   const textRef = useRef(null);
+  const [selectedId, selectShape] = useState(null);
 
   const handleMouseDown = useCallback((e) => {
+    if (tool === 'move') {
+      const clickedOnEmpty = e.target === e.target.getStage();
+      if (clickedOnEmpty) {
+        selectShape(null);
+      }
+      return;
+    }
+
     setIsDrawing(true);
     const pos = e.target.getStage().getPointerPosition();
-    const newShape = { tool, color, points: [pos.x, pos.y], brushSize };
+    const newShape = { tool, color, points: [pos.x, pos.y], brushSize, id: Date.now().toString() };
     setShapes([...shapes, newShape]);
     updateMyPresence({ selectedTool: tool, selectedColor: color });
   }, [shapes, tool, color, brushSize, updateMyPresence]);
@@ -82,6 +93,12 @@ const Whiteboard = ({ params }) => {
             i % 2 === 0 && 
             Math.hypot(p - point.x, shape.points[i + 1] - point.y) < eraserRadius
           );
+        } else if (shape.tool === 'rectangle' || shape.tool === 'circle') {
+          const centerX = shape.points[0] + shape.width / 2;
+          const centerY = shape.points[1] + shape.height / 2;
+          return Math.hypot(centerX - point.x, centerY - point.y) > eraserRadius;
+        } else if (shape.tool === 'text') {
+          return Math.hypot(shape.points[0] - point.x, shape.points[1] - point.y) > eraserRadius;
         }
         return true;
       });
@@ -121,7 +138,8 @@ const Whiteboard = ({ params }) => {
         color, 
         points: [textRef.current.x, textRef.current.y], 
         text: textInput,
-        fontSize: brushSize * 2 // Adjust text size based on brush size
+        fontSize: brushSize * 2,
+        id: Date.now().toString()
       };
       setShapes([...shapes, newShape]);
       setTextInput('');
@@ -165,12 +183,36 @@ const Whiteboard = ({ params }) => {
     }
   };
 
+  const handleDragStart = (e) => {
+    const id = e.target.id();
+    setShapes(
+      shapes.map((shape) => {
+        return {
+          ...shape,
+          isDragging: shape.id === id,
+        };
+      })
+    );
+  };
+
+  const handleDragEnd = (e) => {
+    setShapes(
+      shapes.map((shape) => {
+        return {
+          ...shape,
+          isDragging: false,
+        };
+      })
+    );
+  };
+
   return (
     <motion.div 
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
       className={`w-full h-full bg-white relative ${isFullScreen ? 'fixed inset-0 z-50' : ''}`}
+    
     >
       <div className="absolute top-4 left-4 z-10 flex space-x-2">
         <ToggleGroup type="single" value={tool} onValueChange={(value) => value && setTool(value)}>
@@ -228,18 +270,32 @@ const Whiteboard = ({ params }) => {
       <Stage
         width={window.innerWidth}
         height={window.innerHeight}
+        style={{ 
+          position: 'absolute', 
+          top: 0, 
+          left: 0,
+          backgroundColor: 'white',
+        }}
         onMouseDown={handleMouseDown}
         onMousemove={handleMouseMove}
         onMouseup={handleMouseUp}
         onDblClick={handleTextDblClick}
         ref={stageRef}
       >
+
         <Layer>
+        <Rect
+            x={0}
+            y={0}
+            width={window.innerWidth}
+            height={window.innerHeight}
+            fill="white"
+          />
           {shapes.map((shape, i) => {
             if (shape.tool === 'pencil') {
               return (
                 <Line
-                  key={i}
+                  key={shape.id}
                   points={shape.points}
                   stroke={shape.color}
                   strokeWidth={shape.brushSize}
@@ -247,47 +303,75 @@ const Whiteboard = ({ params }) => {
                   lineCap="round"
                   lineJoin="round"
                   globalCompositeOperation={shape.tool === 'eraser' ? 'destination-out' : 'source-over'}
+                  draggable={tool === 'move'}
+                  onDragStart={handleDragStart}
+                  onDragEnd={handleDragEnd}
+                  id={shape.id}
                 />
               );
             } else if (shape.tool === 'rectangle') {
               return (
                 <Rect
-                  key={i}
+                  key={shape.id}
                   x={shape.points[0]}
                   y={shape.points[1]}
                   width={shape.width}
                   height={shape.height}
                   stroke={shape.color}
                   strokeWidth={shape.brushSize}
+                  draggable={tool === 'move'}
+                  onDragStart={handleDragStart}
+                  onDragEnd={handleDragEnd}
+                  id={shape.id}
                 />
               );
             } else if (shape.tool === 'circle') {
               return (
                 <Circle
-                  key={i}
+                  key={shape.id}
                   x={shape.points[0]}
                   y={shape.points[1]}
                   radius={Math.abs(shape.width + shape.height) / 2}
                   stroke={shape.color}
                   strokeWidth={shape.brushSize}
+                  draggable={tool === 'move'}
+                  onDragStart={handleDragStart}
+                  onDragEnd={handleDragEnd}
+                  id={shape.id}
                 />
               );
             } else if (shape.tool === 'text') {
               return (
                 <Text
-                  key={i}
+                  key={shape.id}
                   x={shape.points[0]}
                   y={shape.points[1]}
                   text={shape.text}
                   fontSize={shape.fontSize}
                   fill={shape.color}
+                  draggable={tool === 'move'}
+                  onDragStart={handleDragStart}
+                  onDragEnd={handleDragEnd}
+                  id={shape.id}
                 />
               );
             }
           })}
         </Layer>
       </Stage>
-     
+      {tool === 'text' && (
+        <textarea
+          value={textInput}
+          onChange={(e) => setTextInput(e.target.value)}
+          onKeyDown={handleTextEnter}
+          style={{
+            position: 'absolute',
+            top: textRef.current ? textRef.current.y : 0,
+            left: textRef.current ? textRef.current.x : 0,
+            zIndex: 1,
+          }}
+        />
+      )}
     </motion.div>
   );
 };

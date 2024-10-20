@@ -2,12 +2,11 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useThreads, useUser } from '@liveblocks/react';
 import { Composer, Thread } from '@liveblocks/react-ui';
 import { Button } from '@/components/ui/button';
-import { MessageCircle, X } from 'lucide-react';
+import { X } from 'lucide-react';
 import { getMentionSuggestions, getUsersFromFirestore } from '@/lib/firebaseUserUtils';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 
-const CommentSidebar = ({ currentUser }) => {
-  const [openComment, setOpenComment] = useState(false);
+const CommentSidebar = ({ currentUser, toggleCommentSidebar }) => {
   const { threads } = useThreads();
   const { user } = useUser();
   const [users, setUsers] = useState({});
@@ -49,8 +48,6 @@ const CommentSidebar = ({ currentUser }) => {
     }
   }, [threads, users, fetchUsers]);
 
-  const toggleComment = () => setOpenComment(prev => !prev);
-
   const renderUsername = (userId) => {
     console.log('Rendering username for userId:', userId);
     console.log('Current users state:', users);
@@ -74,85 +71,51 @@ const CommentSidebar = ({ currentUser }) => {
   }, [users]);
 
   return (
-    <>
-      <div className="fixed top-8 right-6 z-10">
-        <motion.div
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
+    <div className="h-full flex flex-col bg-gray-900 shadow-xl border-l border-gray-700">
+      <div className="flex justify-between items-center p-4 border-b border-gray-700">
+        <h2 className="text-xl font-semibold text-white">Comments</h2>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={toggleCommentSidebar}
+          className="text-gray-300 hover:bg-gray-700"
         >
-          <Button
-            onClick={toggleComment}
-            className="rounded-full bg-blue-600 p-3 text-white shadow-lg hover:bg-blue-700 transition-colors duration-200"
-          >
-            <AnimatePresence mode="wait" initial={false}>
-              <motion.div
-                key={openComment ? 'close' : 'open'}
-                initial={{ opacity: 0, rotate: -180 }}
-                animate={{ opacity: 1, rotate: 0 }}
-                exit={{ opacity: 0, rotate: 180 }}
-                transition={{ duration: 0.2 }}
-              >
-                {openComment ? <X size={24} /> : <MessageCircle size={24} />}
-              </motion.div>
-            </AnimatePresence>
-          </Button>
-        </motion.div>
+          <X className="h-5 w-5" />
+        </Button>
       </div>
-      <AnimatePresence>
-        {openComment && (
-          <motion.div
-            initial={{ opacity: 0, x: 300 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 300 }}
-            transition={{ duration: 0.3 }}
-            className="fixed top-0 right-0 h-full w-[350px] bg-gray-900 shadow-xl flex flex-col overflow-hidden border-l border-gray-700"
-          >
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.1 }}
-              className="flex-grow overflow-auto p-4"
-            >
-              {threads?.map(thread => (
-                <Thread 
-                  key={thread.id} 
-                  thread={thread}
-                  renderUser={renderUser}
-                />
-              ))}
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              className="p-4 bg-gray-800 border-t border-gray-700"
-            >
-              <Composer
-                mentionSuggestions={getMentionSuggestions}
-                currentUser={currentUser}
+      <div className="flex-grow overflow-auto p-4">
+        {threads?.map(thread => (
+          <Thread 
+            key={thread.id} 
+            thread={thread}
+            renderUser={renderUser}
+          />
+        ))}
+      </div>
+      <div className="p-4 bg-gray-800 border-t border-gray-700">
+        <Composer
+          mentionSuggestions={getMentionSuggestions}
+          currentUser={currentUser}
+        >
+          {({ canSubmit, submit, isSubmitting }) => (
+            <form onSubmit={(e) => {
+              e.preventDefault();
+              submit();
+            }}>
+              <Composer.Content />
+              <Composer.Mention />
+              <Button 
+                type="submit" 
+                disabled={!canSubmit}
+                className="mt-2 w-full rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 transition-colors duration-200 disabled:bg-blue-400"
               >
-                {({ canSubmit, submit, isSubmitting }) => (
-                  <form onSubmit={(e) => {
-                    e.preventDefault();
-                    submit();
-                  }}>
-                    <Composer.Content />
-                    <Composer.Mention />
-                    <Button 
-                      type="submit" 
-                      disabled={!canSubmit}
-                      className="mt-2 w-full rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 transition-colors duration-200 disabled:bg-blue-400"
-                    >
-                      {isSubmitting ? 'Sending...' : 'Reply'}
-                    </Button>
-                  </form>
-                )}
-              </Composer>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </>
+                {isSubmitting ? 'Sending...' : 'Reply'}
+              </Button>
+            </form>
+          )}
+        </Composer>
+      </div>
+    </div>
   );
 };
 
