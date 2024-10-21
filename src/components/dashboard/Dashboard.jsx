@@ -113,7 +113,7 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white">
-      <WelcomeSection user={user} />
+      <WelcomeSection user={user} workspaceCount={workspaceList.length} />
       <main className="w-full px-4 sm:px-6 lg:px-8 py-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
