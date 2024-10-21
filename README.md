@@ -20,7 +20,7 @@ CoSyncSpace is a collaborative workspace platform that transforms team productiv
 - **Responsive Design & Dark Mode**: Seamless experience across devices with dark themes.
 
 <img src="https://github.com/user-attachments/assets/47a8abb4-af5c-4174-9418-fba6512bad84" alt="landing" height="300"> <img src="https://github.com/user-attachments/assets/84e4bd80-daf2-4297-8bd9-a2affb033c63" alt="landing" height="300">
-<img src="https://github.com/user-attachments/assets/c8171ee8-c1ae-4292-8c3a-e6e846fc6b81" alt="signup" height="300"> <img src="https://github.com/user-attachments/assets/72da0766-85de-4279-8284-945eda2354ef" alt="dashboard2" height="300">
+<img src="https://github.com/user-attachments/assets/c8171ee8-c1ae-4292-8c3a-e6e846fc6b81" alt="signup" height="300"> <img src="https://github.com/user-attachments/assets/d6d4bcdc-cd8d-4d59-8bb0-ffd58c7ad3c2" alt="dashboard" height="300">
 
 ## Tech Stack
 
