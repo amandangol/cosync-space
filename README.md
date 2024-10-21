@@ -20,6 +20,15 @@ CoSyncSpace is a collaborative workspace platform that transforms team productiv
 - **Responsive Design & Dark Mode**: Seamless experience across devices with dark themes.
 
 <img src="https://github.com/user-attachments/assets/47a8abb4-af5c-4174-9418-fba6512bad84" alt="landing" height="300"> <img src="https://github.com/user-attachments/assets/84e4bd80-daf2-4297-8bd9-a2affb033c63" alt="landing" height="300">
+
+## Why Choose CoSyncSpace?
+
+- **Boost Productivity**: Real-time collaboration eliminates version control issues.
+- **Flexible Workspaces**: Adapt to various project needs with document and whiteboard modes.
+- **AI Assistance**: Jumpstart projects with AI-generated templates.
+- **Enhanced Security**: Clerk authentication and secure sharing protect your data.
+- **User-Friendly Interface**: Intuitive design for easy adoption across teams.
+
 <img src="https://github.com/user-attachments/assets/c8171ee8-c1ae-4292-8c3a-e6e846fc6b81" alt="signup" height="300"> <img src="https://github.com/user-attachments/assets/d6d4bcdc-cd8d-4d59-8bb0-ffd58c7ad3c2" alt="dashboard" height="300">
 
 ## Tech Stack
@@ -59,29 +68,33 @@ CoSyncSpace is a collaborative workspace platform that transforms team productiv
    ```
 3. **Configure environment variables:**  
     Create a `.env` file and add:
+
    ```plaintext
-   NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=
-   CLERK_SECRET_KEY=
+   NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY= your_clerk_publishable_key
+   CLERK_SECRET_KEY= your_clerk_secret_key
    NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
    NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up
    NEXT_PUBLIC_CLERK_SIGN_IN_FORCE_REDIRECT_URL=/cosyncspace-dashboard
    NEXT_PUBLIC_CLERK_SIGN_UP_FORCE_REDIRECT_URL=/cosyncspace-dashboard
    CLERK_SIGN_IN_FALLBACK_REDIRECT_URL=/
    CLERK_SIGN_IN_FALLBACK_REDIRECT_URL=/
-   NEXT_PUBLIC_FIREBASE_API_KEY=
-   NEXT_PUBLIC_LIVEBLOCK_PRIMARY_KEY=
-   LIVEBLOCKS_SK=
-   NEXT_PUBLIC_GEMINI_API_KEY=
+
+   NEXT_PUBLIC_FIREBASE_API_KEY= your_firebase_api_key
+
+   NEXT_PUBLIC_LIVEBLOCK_PRIMARY_KEY= your_liveblock_primary_key
+   LIVEBLOCKS_SK= your_liveblocks_secret_key
+
+   NEXT_PUBLIC_GEMINI_API_KEY= your_gemini_api_key
    NEXT_PUBLIC_MAX_DOCUMENTS_COUNT=7
    ```
+
 4. **Start the development server:**
 
 ```bash
 npm run dev
 ```
 
-5. **Access the application:**  
-   Visit `http://localhost:3000` in your browser.
+5. **Access the application at http://localhost:3000 in your browser.**
 
 ## Usage
 
@@ -100,6 +113,8 @@ npm run dev
    - Choose "Get shareable link" and set permissions.
    - Copy the generated link and send it via email to collaborators.
 8. **Securely share and manage documents** across your team.
+
+Experience the future of collaborative workspaces with CoSyncSpace – where productivity meets innovation.
 
 ## Snapshots
 
